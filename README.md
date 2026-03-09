@@ -24,4 +24,12 @@ But hopefully I´ll have that fixed up, and release will be on schedule, but if 
 in a new post. Also, reminder, all of my stuff is open source, so if there´s stuff you want to change, go for it!
 
 
+So, yeah, update, I fixed a bunch of new bugs off-scene, and got Doom to finally load, and run. It's pretty solid, for something
+I made myself, to say the least. Still in testing, and have to learn controls on PS4 to post here,
+but yeah, pretty solid, and I can say confidently that the release probably won't be delayed, lol.
+Not 100% confirmed yet, but yeah, that's cool. Hey, when it releases, I'll show it off to my friends next week!
+
+Update you later, FreeBSDKernel9-0.
+
+
 Bye for now, FreeBSDKernel9-0.
