@@ -5,11 +5,15 @@
 </head>
 
 
-<body style="background:black;color:lime;text-align:center;padding-top:"100px";>
+<body style="background:black;color:lime;text-align:center;padding-top:100px;">
 
 
 <script>
 
+
+<body style="background:black;color:lime;text-align:center;padding-top:100px;">
+
+<script>
 
 alert("Awaiting Payload... (doom.bin) Alpha Version"); 
 alert("Got response! (doom.bin) Alpha Version"); 
@@ -18,30 +22,23 @@ alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
 alert("Hey, welcome to WebKit Doom (Alpha Version). This is an unreleased version of WebKit Doom, not meant to be shown to the public. -Shadowdev-Vita.");
 
 function sleep(ms) {
-return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  
-//Load Doom
-var frame =   document.createElement("iframe"); 
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+  // Load Doom
+var frame = document.createElement("iframe");
 frame.src = "https://js-dos.com/games/doom.exe.html";
 frame.style.position = "fixed";
-frame.style.top ="0";
+frame.style.top = "0";
 frame.style.left = "0";
 frame.style.height = "100%";
 frame.style.width = "100%";
 frame.style.border = "none";
-document.body.appendChild(frame); 
-
-
-  }
-
-runLoader();
+document.body.appendChild(frame);
 
 </script>
 
-<body>
-
-</html>
+</body>
 
 
 
