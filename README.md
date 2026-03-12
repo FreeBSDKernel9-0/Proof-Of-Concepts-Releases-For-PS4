@@ -54,3 +54,8 @@ So yeah, that'll be delayed for a bit, as I need to find a Doom engine in C, and
 So, yeah, that's my update, and I'll see you later.
 
 Bye for now, FreeBSDKernel9-0.
+
+So, another update, I changed the name of WebKit Doom to WebKit Doom v2.00 - Google Version. Going to update the release to accomodate the change.
+
+Short and sweet, I know,
+FreeBSDKernel9-0.
