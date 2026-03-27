@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SHADOWDEV 13.04</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00ff41; /* Classic Matrix/Terminal Green */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        #status {
+            font-size: 18px;
+            margin-top: 20px;
+            height: 30px;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:active {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">SHADOWDEV 13.04 - NEW FILE</div>
+
+    <button onclick="loadFile()">CLICK ME</button>
+
+    <div id="status"></div>
+
+    <script>
+        function loadFile() {
+            document.getElementById('status').innerText = "SUCCESS: NEW FILE LOADED";
+            
+            // Optional: Hide the button after click to keep the terminal clean
+            // document.querySelector('button').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
