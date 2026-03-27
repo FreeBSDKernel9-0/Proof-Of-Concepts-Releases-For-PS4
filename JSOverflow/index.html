@@ -1,23 +1,32 @@
-@'
 <!DOCTYPE html>
 <html>
 <head>
-    <title>13.04 Research Lab</title>
-    <meta charset="utf-8">
+    <title>PS4 Test</title>
 </head>
-<body style="background-color: #1a1a1a; color: #00ff00; font-family: monospace; padding: 20px;">
-    <h1>Sub-Strata Data Uplink</h1>
-    <hr>
-    <button style="width: 100%; height: 100px; font-size: 20px;" onclick="runExploit()">INITIALIZE DATA STREAM</button>
-    
+<body style="background-color: black; color: #00ff41; text-align: center; padding-top: 100px;">
+
+    <div id="display">READY...</div>
+
     <script>
-    function runExploit() {
-        alert(`The Architecture of the Sub-Strata\n\nDescending into the Sub-Strata was less like walking down stairs and more like falling through a series of poorly remembered dreams. The light from the Pendulum above didn’t simply fade; it curdled, turning into a thick, mustard-colored gloom that seemed to cling to the skin. Here, the geometry of the Spire began to fail...\n\n(Data truncated for display)`);
-        
-        // This is where you would place the JSOverflow logic from GitHub
-        console.log("Buffer overflow sequence initiated...");
-    }
+        let stressArray = [];
+        let count = 0;
+
+        function ps4StressTest() {
+            for (let i = 0; i < 1000; i++) {
+                let data = "Hello, Lua! #" + count;
+                stressArray.push(data); 
+                count++;
+            }
+
+            // Update the screen
+            document.getElementById('display').innerHTML = 
+                "<h1 style='font-size: 80px;'>" + count.toLocaleString() + "</h1>";
+
+            setTimeout(ps4StressTest, 10); 
+        }
+
+        // Start the test
+        ps4StressTest();
     </script>
 </body>
 </html>
-'@ | Out-File -FilePath "$env:TEMP\poc.html" -Encoding utf8
