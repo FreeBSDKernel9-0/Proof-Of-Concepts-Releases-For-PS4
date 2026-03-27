@@ -57,5 +57,9 @@ Bye for now, FreeBSDKernel9-0.
 
 So, another update, I changed the name of WebKit Doom to WebKit Doom v2.00 - Google Version. Going to update the release to accomodate the change.
 
+So, a couple updates. I made a subfolder called JSOverflow, and it's basically just a bunch of stress tests for WebKit.
+I made a progress/documentation report on Reddit explaining the "safeguards" and stability of System Software 13.04, and my conclusion was basically that there is definetely better "safeguards", and the stability is better, but there is definetely some open holes and stuff to play with, that could (hopefully) aid in an exploit for 13.04, in the next couple months to a year.
+
+Bye for now, FreeBSDKernel9-0.
 Short and sweet, I know,
 FreeBSDKernel9-0.
