@@ -34,9 +34,6 @@ Not 100% confirmed yet, but yeah, that's cool. Hey, when it releases, I'll show 
 Update you later, FreeBSDKernel9-0.
 
 
-Bye for now, FreeBSDKernel9-0.
-
-
 So, yeah, update, I might have to make two versions of WebKit Doom (not changing the name, though. Maybe.) 
 The reason why is because I really wanna make a version for WebKit on the PS4, and my current approach (emulation, using js-dos.com), works well on Google, but it's incredibly slow on WebKit,
 it´s really slow to the point where: My alerts work. The game does the intro, but doesn't boot. So you´ll see two versions of WebKit Doom when it releases: WebKit Doom v1.0, for Google,
