@@ -2,11 +2,10 @@ local file1 = io.open("WebKitLua", "w")
 local file2 = io.open("index.html", "w")
 
 if file1 and file2 then
-    -- This saves your dev log
+
     file1:write("\n")
-    
-    -- This saves the page for the PS4
-    file2:write("<html><body><h1>Bridge Active</h1><p>Shadowdev-Vita</p></body></html>")
+
+    file2:write("<html><body><h1>Script running...</h1><p>Shadowdev-Vita</p></body></html>")
     
     file1:close()
     file2:close()
