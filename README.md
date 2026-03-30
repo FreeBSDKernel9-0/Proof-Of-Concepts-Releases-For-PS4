@@ -11,8 +11,7 @@ Hope y´all like it, FreeBSDKernel9-0.
 
 So, update, my proof-of-concept for the JS-Strings-with-WebKit vulnerability broke, so I´m gonna start rewriting from 
 scratch. So, I guess It´s still in beta, lol. Will rewrite, then start Alpha testing, lol. If all goes to plan, release will be in 2 days, on
-10/03/2026. And I´m also gonna maybe make mods for my version of Doom, which, by the way, is called: WebKit Doom. Pretty boring
-name, I know.
+10/03/2026. And I´m also gonna maybe make mods for my version of Doom, which, by the way, is called: WebKit Doom. Pretty boring name, I know.
 
 
 Bye for now, FreeBSDKernel9-0.
@@ -26,7 +25,7 @@ in a new post. Also, reminder, all of my stuff is open source, so if there´s st
 Bye for now, FreeBSDKernel9-0.
 
 
-So, yeah, update, I fixed a bunch of new bugs off-scene, and got Doom to finally load, and run. It's pretty solid, for something
+So, yeah, update, I fixed a bunch of new bugs off-scene, and got Doom to finally load, and run. It's pretty solid, for something 
 I made myself, to say the least. Still in testing, and have to learn controls on PS4 to post here,
 but yeah, pretty solid, and I can say confidently that the release probably won't be delayed, lol.
 Not 100% confirmed yet, but yeah, that's cool. Hey, when it releases, I'll show it off to my friends next week!
@@ -36,9 +35,9 @@ Update you later, FreeBSDKernel9-0.
 
 So, yeah, update, I might have to make two versions of WebKit Doom (not changing the name, though. Maybe.) 
 The reason why is because I really wanna make a version for WebKit on the PS4, and my current approach (emulation, using js-dos.com), works well on Google, but it's incredibly slow on WebKit,
-it´s really slow to the point where: My alerts work. The game does the intro, but doesn't boot. So you´ll see two versions of WebKit Doom when it releases: WebKit Doom v1.0, for Google,
-and WebKit Doom v2.0, for... you guessed it, WebKit. I´m gonna try remaking the WebKit version from scratch, using a Doom engine.
-I´m gonna try and make it so you can have both index.html files in the same repo, and in the commit, have: WebKit Doom v1.0 - Google, and WebKit Doom v2.0.
+it´s really slow to the point where: My alerts work. The game does the intro, but doesn't boot. So you´ll see two versions of WebKit Doom when it releases: WebKit Doom v2.00, for Google,
+and WebKit Doom v2.01, for... you guessed it, WebKit. I´m gonna try remaking the WebKit version from scratch, using a Doom engine.
+I´m gonna try and make it so you can have both index.html files in the same repo, and in the commit, have: WebKit Doom v2.00 - Google Version, and WebKit Doom v2.01.
 
 So yeah, you can just say the status of the WebKit version is 'IN PROGRESS". But don´t worry, the Google version is still releasing on: 10/03/2026.
 
@@ -46,7 +45,7 @@ Sorry for the inconvenience, FreeBSDKernel9-0.
 
 
 RELEASE DAY OF: WebKit Doom v2.0 - Google Version! So, yeah, kept my word, released it on the 10th. 
-But yeah, update, I'm gonna rebuild WebKit Doom v2.0 - WebKit Version from scratch, using C. 
+But yeah, update, I'm gonna rebuild WebKit Doom v2.01 - WebKit Version from scratch, using C. 
 So yeah, that'll be delayed for a bit, as I need to find a Doom engine in C, and will have to get to grips with it.
 So, yeah, that's my update, and I'll see you later.
 
@@ -56,6 +55,15 @@ So, another update, I changed the name of WebKit Doom to WebKit Doom v2.00 - Goo
 
 So, a couple updates. I made a subfolder called JSOverflow, and it's basically just a bunch of stress tests for WebKit.
 I made a progress/documentation report on Reddit explaining the "safeguards" and stability of System Software 13.04, and my conclusion was basically that there is definetely better "safeguards", and the stability is better, but there is definetely some open holes and stuff to play with, that could (hopefully) aid in an exploit for 13.04, in the next couple months to a year.
+
+Bye for now, FreeBSDKernel9-0.
+
+So, yeah, my report went pretty well, and I'll see if there's new comments later.
+But as of right now, I'm working on some other stuff. I haven't had time to fix WebKit Doom, to form the v2.01 release,
+but I have a new project that's in Prototype phase or now, and it's a "Call Lua from WebKit" thing,
+called WebKitLua. I'll post it here in a sec, and start testing, lol.
+But don't worry, I'm on a laptop now, so fixing WebKit doom to form v2.01 will be MUCH faster,
+and I can hopefully get it out soon. No current release date confirmed yet.
 
 Bye for now, FreeBSDKernel9-0.
 Short and sweet, I know,
