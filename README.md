@@ -44,7 +44,7 @@ So yeah, you can just say the status of the WebKit version is 'IN PROGRESS". But
 Sorry for the inconvenience, FreeBSDKernel9-0.
 
 
-RELEASE DAY OF: WebKit Doom v2.0 - Google Version! So, yeah, kept my word, released it on the 10th. 
+RELEASE DAY OF: WebKit Doom v2.00 - Google Version! So, yeah, kept my word, released it on the 10th. 
 But yeah, update, I'm gonna rebuild WebKit Doom v2.01 - WebKit Version from scratch, using C. 
 So yeah, that'll be delayed for a bit, as I need to find a Doom engine in C, and will have to get to grips with it.
 So, yeah, that's my update, and I'll see you later.
