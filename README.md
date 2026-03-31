@@ -68,3 +68,18 @@ and I can hopefully get it out soon. No current release date confirmed yet.
 Bye for now, FreeBSDKernel9-0.
 Short and sweet, I know,
 FreeBSDKernel9-0.
+
+So, yeah, some updates - I have 2 new projects now, WebKitLua, which is a "Call Lua on WebKit" thing,
+that runs a Lua VM (Lua 5.4.6 - compiled from source) on WebKit, allowing for debugging of Lua code, and writing custom scripts, which is cool. I doubt I'll use it much, but it's pretty cool, nonetheless.
+
+My other project, leak-pointer.js, is me trying to see if I can get WebKit to leak one of it's
+internal addresses - or pointers, using a Hunter, combined with my Memory Stress Test, that I mentioned in 
+my Reddit post.
+
+What's supposed to happen - if the PS4 security holds up - the browser remains responsive, and after the message, 
+the script won't move further.
+
+If WebKit doesn't hold up - the FOUND IT! text will appear, and you'll get a scientific notion string: 2.12e-314 or similar.
+
+Hope it doesn't hold up,
+FreeBSDKernel9-0.
