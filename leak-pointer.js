@@ -26,11 +26,11 @@ function runExperiment() {
     
     if (found) {
         
-        console.log("[!!!] WE GOT SOMETHING. CHECK THE LOGS ABOVE.");
+        console.log("[!!!] FOUND IT! (checkLog)");
     } else {
         
     
-        setTimeout(runExperiment, 50); 
+        setTimeout(runExperiment, 100); 
     }
 }
 
