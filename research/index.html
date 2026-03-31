@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>13.04 Leak Pointer Research</title>
+    <style>
+        body { background: #121212; color: #00ff00; font-family: monospace; padding: 20px; }
+        #log { white-space: pre-wrap; border: 1px solid #333; padding: 10px; height: 80vh; overflow: auto; }
+        h2 { color: #fff; }
+    </style>
+</head>
+<body>
+    <h2>13.04 Leak Hunter</h2>
+    <div id="log">Starting Memory Stress, to check for leak...<br></div>
+
+    <script>
+        
+        const logDiv = document.getElementById('log');
+        console.log = function(msg) {
+            logDiv.innerHTML += msg + "<br>";
+            logDiv.scrollTop = logDiv.scrollHeight;
+        };
+    </script>
+
+    <script src="leak-pointer.js"></script>
+    <script src="research/leak-pointer.js"></script>
+</body>
+</html>
