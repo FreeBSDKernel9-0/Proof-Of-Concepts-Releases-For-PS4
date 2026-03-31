@@ -1,15 +1,53 @@
-async function init() {
-    try {
-        await fetch("/ps4/data/Lockpick");
-    } catch (e) {
-        
-        document.body.innerHTML = "<h1>Security Result: " + e.message + "</h1>";
-    }
-    
-    
-    setTimeout(() => {
-        startStressTest(); 
-    }, 5000); 
-}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>13.04 Lockpick Memery Probing</title>
+</head>
+<body>
+    <h1>Starting 13.04 Lockpick Memory Probing - Target: 1095MB</h1>
 
-init();
+    <script>
+        
+        function startStressTest() {
+            console.log("Starting Lockpick Memory Probing: Target 1095MB");
+            var memoryHog = [];
+            var totalAllocated = 0;
+            var targetMB = 1095;
+
+            try {
+                for (var i = 0; i < targetMB; i++) {
+                    memoryHog.push(new Uint8Array(1024 * 1024));
+                    totalAllocated++;
+                    if (totalAllocated % 100 === 0) {
+                        console.log("Allocated: " + totalAllocated + "MB");
+                    }
+                }
+                document.body.innerHTML += "<h2>Allocation Complete: " + totalAllocated + "MB</h2>";
+            } catch (e) {
+                document.body.innerHTML += "<h2 style='color:red;'>System Limit Reached at " + totalAllocated + "MB</h2>";
+                console.log("Error: Memory Fail - Allocated higher than 1095 MB." + e.message);
+            }
+        }
+
+        
+        async function init() {
+            try {
+                // Actual probe attempt
+                await fetch("/ps4/data/Lockpick");
+                
+                document.body.innerHTML = "<h1>Probe Finished: No Errors (Unexpected File acces (/ps4/data/lockpick)</h1>";
+            } catch (e) {
+                document.body.innerHTML = "<h1>Security Result: " + e.message + "</h1>";
+            }
+
+            
+            setTimeout(() => {
+                startStressTest();
+            }, 5000);
+        }
+
+        
+        init();
+    </script>
+</body>
+</html>
