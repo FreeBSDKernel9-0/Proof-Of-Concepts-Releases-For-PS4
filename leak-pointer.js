@@ -19,3 +19,20 @@ function leakHunter() {
     }
     return false;
 }
+
+function runExperiment() {
+    
+    let found = leakHunter();
+    
+    if (found) {
+        
+        console.log("[!!!] WE GOT SOMETHING. CHECK THE LOGS ABOVE.");
+    } else {
+        
+    
+        setTimeout(runExperiment, 50); 
+    }
+}
+
+
+runExperiment();
