@@ -69,10 +69,7 @@ Bye for now, FreeBSDKernel9-0.
 Short and sweet, I know,
 FreeBSDKernel9-0.
 
-So, yeah, some updates - I have 2 new projects now, WebKitLua, which is a "Call Lua on WebKit" thing,
-that runs a Lua VM (Lua 5.4.6 - compiled from source) on WebKit, allowing for debugging of Lua code, and writing custom scripts, which is cool. I doubt I'll use it much, but it's pretty cool, nonetheless.
-
-My other project, leak-pointer.js, is me trying to see if I can get WebKit to leak one of it's
+So, yeah, some updates - I have 1 new project now, leak-pointer.js, which is just me trying to see if I can get WebKit to leak one of it's
 internal addresses - or pointers, using a Hunter, combined with my Memory Stress Test, that I mentioned in 
 my Reddit post.
 
