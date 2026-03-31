@@ -1,0 +1,15 @@
+async function init() {
+    try {
+        await fetch("/ps4/data/Lockpick");
+    } catch (e) {
+        
+        document.body.innerHTML = "<h1>Security Result: " + e.message + "</h1>";
+    }
+    
+    
+    setTimeout(() => {
+        startStressTest(); 
+    }, 5000); 
+}
+
+init();
