@@ -35,7 +35,7 @@
                 // Actual probe attempt
                 await fetch("/ps4/data/Lockpick");
                 
-                document.body.innerHTML = "<h1>Probe Finished: No Errors (Unexpected File acces (/ps4/data/lockpick)</h1>";
+                document.body.innerHTML = "<h1>Probe Finished: No Errors (Unexpected File access -  (/ps4/data/lockpick)</h1>";
             } catch (e) {
                 document.body.innerHTML = "<h1>Security Result: " + e.message + "</h1>";
             }
