@@ -4,10 +4,11 @@
     <title>13.04 Lockpick Memory Probing</title>
 </head>
 <body>
-    <h1>Starting 13.04 Lockpick Memory Probing - Target: 1095MB</h1>
+    <div id="status-container">
+        <h1>Starting 13.04 Lockpick Memory Probing - Target: 1095MB</h1>
+    </div>
 
     <script>
-        
         function startStressTest() {
             console.log("Starting Lockpick Memory Probing: Target 1095MB");
             var memoryHog = [];
@@ -25,18 +26,22 @@
                 document.body.innerHTML += "<h2>Allocation Complete: " + totalAllocated + "MB</h2>";
             } catch (e) {
                 document.body.innerHTML += "<h2 style='color:red;'>System Limit Reached at " + totalAllocated + "MB</h2>";
-                console.log("Error: Memory Fail - Allocated higher than 1095 MB." + e.message);
+                console.log("Error: Memory Fail - Allocated higher than 1095 MB. " + e.message);
             }
         }
 
-        
         async function init() {
+            
+            document.body.innerHTML = "<h1>Probe Status: Running...</h1>";
+
             try {
-                // Actual probe attempt
+                
                 await fetch("/ps4/data/Lockpick");
                 
-                document.body.innerHTML = "<h1>Probe Finished: No Errors (Unexpected File access -  (/ps4/data/lockpick)</h1>";
+        
+                document.body.innerHTML = "<h1>Probe Finished: No Errors (Unexpected File access - (/ps4/data/lockpick)</h1>";
             } catch (e) {
+                
                 document.body.innerHTML = "<h1>Security Result: " + e.message + "</h1>";
             }
 
