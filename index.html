@@ -4,18 +4,140 @@
     <title>13.04 Memory Stress Test</title>
     <link rel="icon" href="data:,">
     <style>
-        body { background: #000; color: #0f0; font-family: monospace; text-align: center; padding-top: 50px; }
-        .btn { border: 1px solid #0f0; padding: 15px; cursor: pointer; text-decoration: none; color: #0f0; display: inline-block; margin-top: 20px; }
-        .btn:hover { background: #0f0; color: #000; }
+        /* Main Page Styling */
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: monospace; 
+            text-align: center; 
+            padding-top: 50px; 
+            overflow-x: hidden; 
+        }
+
+        .btn { 
+            border: 1px solid #0f0; 
+            padding: 15px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            color: #0f0; 
+            display: inline-block; 
+            margin-top: 20px; 
+            width: 200px; 
+            transition: 0.3s;
+        }
+
+        .btn:hover { 
+            background: #0f0; 
+            color: #000; 
+        }
+
+        #counter { 
+            font-size: 20px; 
+            color: #5dade2; 
+            margin-top: 20px; 
+            margin-bottom: 10px; 
+        }
+        
+        /* The Notification Box Styling */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: -350px; /* Start off-screen */
+            width: 300px;
+            background: rgba(20, 20, 20, 0.95);
+            color: #fff;
+            border-left: 5px solid #5dade2;
+            padding: 15px;
+            font-family: sans-serif;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: right 0.5s ease-in-out;
+            z-index: 9999;
+            text-align: left;
+        }
+
+        .notification.show { 
+            right: 20px; /* Slide into view */
+        }
+
+        .notification b { 
+            color: #5dade2; 
+            display: block; 
+            margin-bottom: 5px; 
+        }
     </style>
 </head>
+
 <body>
+    <div id="notif-box" class="notification">
+        <b id="notif-title">System Message</b>
+        <span id="notif-text"></span>
+    </div>
+
     <h1>Memory Stress Test</h1>
     <p>{REWRITTEN VERSION OF OLD TOOL ASSET}</p>
-    <p>System Software 13.04 Detected</p>
-    <p>WebKit Version: Mozilla 5.0 (PlayStation 4/13.04) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15</p>
+    
+    <center>
+        <div id="counter">Memory Allocated: 0 MB</div>
+        <a href="javascript:void(0)" class="btn" onclick="runStressTest()">Run Stress Test</a>
+    </center>
+
     <br>
+    
     <script src="leak-pointer.js"></script> 
-    <p style="margin-top:50px; color: #666;">Developed by Shadowdev-Vita. (Open source software. Anyone can modify, make derivatives of, and distrubute this software.)</p>
+
+    <script>
+        
+        function showNotification(title, text, duration) {
+            var box = document.getElementById('notif-box');
+            document.getElementById('notif-title').innerHTML = title;
+            document.getElementById('notif-text').innerHTML = text;
+            
+        
+            box.classList.add('show');
+
+            
+            setTimeout(function() {
+                box.classList.remove('show');
+            }, duration);
+        }
+
+        
+        var memoryLocker = []; 
+        function runStressTest() {
+            var display = document.getElementById('counter');
+            var allocated = 0;
+
+            
+            setInterval(function() {
+                try {
+                    
+                    var chunk = new Uint8Array(10 * 1024 * 1024);
+                    for (var i = 0; i < chunk.length; i += 4096) chunk[i] = 0x41;
+                    
+                    memoryLocker.push(chunk);
+                    allocated += 10;
+                    display.innerHTML = "Memory Allocated: " + allocated + " MB";
+                } catch(e) {
+                    display.innerHTML = "Limit Reached: " + allocated + " MB";
+                    display.style.color = "#ff4444";
+                }
+            }, 100);
+        }
+
+        
+        window.onload = function() {
+            
+            showNotification("PS4 Detected", "System Software: 13.04", 4000);
+
+            
+            setTimeout(function() {
+                showNotification("WebKit Version", "Mozilla 5.0 (PS4/13.04) AppleWebKit/605.1.15", 4000);
+            }, 5000); 
+        };
+    </script>
+
+    <p style="margin-top:50px; color: #666;">
+        Developed by Shadowdev-Vita. (Open source software.)
+    </p>
 </body>
 </html>
