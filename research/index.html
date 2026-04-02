@@ -8,7 +8,7 @@
         body { background-color: #000; color: #00ff00; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow: hidden; }
         h1 { margin-top: 50px; text-shadow: 0 0 10px #00ff00; }
         
-        /* The "Sony Style" Notification */
+        
         #notification {
             position: fixed; top: 20px; right: -400px; width: 350px; 
             background: rgba(20, 20, 20, 0.9); border-left: 5px solid #00ff00;
@@ -53,11 +53,67 @@
         
             runExperiment(); 
         }
+<script>
+        window.onload = () => {
+            setTimeout(() => {
+                const nav = document.getElementById('notification');
+                if (nav) nav.style.right = '20px';
+            }, 1000);
+        
+        let confuser = { a: 1.1 }; 
+        let trash = []; 
 
-        /* --- NY ORIGINAL BACKUP CODE BELOW THIS LINE (DON'T FORGET) --- */
+        function leakHunter() {
+            
+            for (let i = 0; i < 10000; i++) {
+                
+                
+                
+                confuser.a = (i % 2 === 0) ? { leak: 0x41414141 } : 1.2345;
+                
+                
+                if (i % 100 === 0) {
+                    trash.push(new Array(100)); 
+                }
+            }
+
+            let result = confuser.a;
+            
+            
+            if (typeof result !== 'object' && typeof result !== 'number') {
+                console.log("[!] TYPE MORPH DETECTED: " + result);
+                return true;
+            }
+            return false;
+        }
+
+        function runExperiment() {
+            const found = leakHunter();
+            
+            if (found) {
+                console.log("[!!!] SUCCESS: POINTER LEAK FOUND");
+                alert("Success: Type Confusion Triggered.");
+            } else {
+                
+                setTimeout(runExperiment, 100); 
+            }
+        }
+
+        function startHunter() {
+            const btn = document.getElementById('runBtn');
+            btn.innerText = "STRESS TEST ACTIVE";
+            btn.disabled = true;
+            
+            console.log("Starting Heavy Stress Test...");
+            runExperiment(); 
+        }
+    </script>
+</body>
+</html>
+        
 
         
-        /* --- MY ORIGINAL BACKUP CODE ABOVE THIS LINE (SINCE YOUR OLD VERSION GOT ERASED, USE YOUR OLD BAVKUP) --- */
+        
     </script>
 </body>
 </html>
