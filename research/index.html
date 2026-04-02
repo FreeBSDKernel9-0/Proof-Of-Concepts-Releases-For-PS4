@@ -6,114 +6,76 @@
     <title>Hunter Suite</title>
     <style>
         body { background-color: #000; color: #00ff00; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow: hidden; }
-        h1 { margin-top: 50px; text-shadow: 0 0 10px #00ff00; }
-        
-        
+        h1 { margin-top: 50px; text-shadow: 0 0 10px #00ff00; font-size: 22px; }
         #notification {
             position: fixed; top: 20px; right: -400px; width: 350px; 
             background: rgba(20, 20, 20, 0.9); border-left: 5px solid #00ff00;
             padding: 15px; color: #fff; text-align: left; font-size: 14px;
             transition: right 0.5s ease-in-out; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 100;
         }
         #notification b { color: #00ff00; }
-
         .btn {
             margin-top: 30px; padding: 15px 30px; background: transparent; 
             border: 2px solid #00ff00; color: #00ff00; cursor: pointer;
             font-weight: bold; font-size: 18px; transition: 0.3s;
         }
         .btn:hover { background: #00ff00; color: #000; box-shadow: 0 0 20px #00ff00; }
+        .btn:disabled { border-color: #555; color: #555; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
     <h1>Memory Stress Test and Hunter (Pointer Leak) Combined</h1>
     
-    <button class="btn" onclick="startHunter()">RUN STRESS TEST</button>
+    <button class="btn" id="runBtn" onclick="startHunter()">RUN STRESS TEST</button>
 
     <div id="notification">
-        <b>System Update</b><br>
         System Software 13.04 Detected<br>
-        <span style="font-s
+        <span style="font-size: 10px; color: #aaa;">WebKit: Mozilla 5.0 (PlayStation 4/13.04) AppleWebKit/605.1.15</span>
     </div>
 
     <script>
-        
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('notification').style.right = '20px';
-            }, 1000);
-        };
-
-        function startHunter() {
-            document.querySelector('.btn').innerText = "System Software 13.04 Detected";
-            document.querySelector('.btn').innerText = "WebKit: Mozilla 5.0 (PlayStation 4/13.04) AppleWebKit/605.1.15"
-            document.querySelector('.btn').disabled = true;
-            
-        
-            runExperiment(); 
-        }
-<script>
         window.onload = () => {
             setTimeout(() => {
                 const nav = document.getElementById('notification');
                 if (nav) nav.style.right = '20px';
             }, 1000);
-        
+        };
+
         let confuser = { a: 1.1 }; 
         let trash = []; 
 
         function leakHunter() {
-            
             for (let i = 0; i < 10000; i++) {
-                
-                
-                
                 confuser.a = (i % 2 === 0) ? { leak: 0x41414141 } : 1.2345;
-                
-                
                 if (i % 100 === 0) {
                     trash.push(new Array(100)); 
                 }
             }
-
             let result = confuser.a;
-            
-            
             if (typeof result !== 'object' && typeof result !== 'number') {
-                console.log("[!] TYPE MORPH DETECTED: " + result);
+                console.log("[!] We have Type Confusion running successfully on 13.04. " + result);
                 return true;
             }
             return false;
         }
 
         function runExperiment() {
-            const found = leakHunter();
-            
-            if (found) {
-                console.log("[!!!] SUCCESS: POINTER LEAK FOUND");
-                alert("Success: Type Confusion Triggered.");
+            if (leakHunter()) {
+                console.log("[!!!] SUCCESS");
+                alert("Success: ");
             } else {
-                
                 setTimeout(runExperiment, 100); 
             }
         }
 
         function startHunter() {
             const btn = document.getElementById('runBtn');
-            btn.innerText = "STRESS TEST ACTIVE";
+            btn.innerText = "RUNNING HUNTER SCRIPT - PART ONE";
             btn.disabled = true;
-            
-            console.log("Starting Heavy Stress Test...");
             runExperiment(); 
         }
-    </script>
-</body>
-</html>
-        
-
-        
-        
     </script>
 </body>
 </html>
