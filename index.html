@@ -2,51 +2,115 @@
 <html>
 <head>
   <meta charset="utf-8">
-<title>PS4 Homebrew Loader - Alpha Version</title>
- <script>
-javascript:alert("Welcome to PS4 Homebrew Loader - Alpha Version. Made by Shadowdev-Vita, SufficientWin8669, and Potential_Cattle7163. This is a test version, not meant for public release.");
-</script>
+  <title>PS4 Homebrew Loader - Alpha Version</title>
+  <style>
+    body { background-color: #000; color: #00ff00; font-family: monospace; margin: 0; overflow: hidden; }
+    #boot-screen {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #004d99 0%, #002b5c 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 1s ease-out;
+    }
+    .hb-logo {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: bounce 2s infinite ease-in-out;
+    }
+    .hb-text {
+      color: white;
+      margin-top: 20px;
+      font-family: sans-serif;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    #log-container {
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+  </style>
+  <script>
+    function writeLog(text) {
+      console.log(text);
+      const container = document.getElementById("log-container");
+      if (container) {
+        container.innerText += text + "\n";
+        container.scrollTop = container.scrollHeight;
+      }
+    }
 
-<script>
     const spraySize = 0x10000;
     const sprayCount = 0x300;
     let spray = [];
 
-    for (let i = 0; i < sprayCount; i++) {
-      let arr = new Array(spraySize);
-      arr.fill(0x41414141);
-      spray.push(arr);
+    function run_exploit() {
+      document.getElementById("boot-screen").style.opacity = "0";
+      setTimeout(() => {
+        document.getElementById("boot-screen").style.display = "none";
+        document.getElementById("log-container").style.display = "block";
+        for (let i = 0; i < sprayCount; i++) {
+          let arr = new Array(spraySize);
+          arr.fill(0x41414141);
+          spray.push(arr);
+        }
+        writeLog("[+] Heap Spray: 100%");
+        let fake = { marker: 0x1337 };
+        writeLog("[+] Status: Fake Object Created.");
+        const leak = 0xdeadbeef;
+        writeLog("[+] Leak: 0x" + leak.toString(16));
+        trigger_rop();
+      }, 1000);
     }
-
-    console.log("[+] Heap Spray: 100%");
-
-    let fake = { marker: 0x1337 };
-    console.log("[+] Status: Fake Object Created.");
-
-    const leak = 0xdeadbeef;
-    console.log("[+] Leak: 0x" + leak.toString(16));
 
     function trigger_rop() {
-      console.log("[*] Awaiting Payload... (payload.bin) ");
+      writeLog("[*] Awaiting Payload... (payload.bin)");
     }
 
-    trigger_rop();
-  </script>
-  <script>
     function load_payload() {
       fetch("payload.bin")
         .then(res => res.arrayBuffer())
         .then(buf => {
-          console.log("[+] You're all set!" + buf.byteLength + " bytes");
+          writeLog("[+] You're all set! " + buf.byteLength + " bytes");
         })
-        .catch(err => console.error("[-] Jailbreak failed! Reboot your PS4 and try again.", err));
+        .catch(err => writeLog("[-] Jailbreak failed! Reboot your PS4 and try again."));
     }
 
     window.onload = () => {
-      console.log("[+] Exploit ready.");
-      load_payload();
+      setTimeout(() => {
+        alert("Welcome to PS4 Homebrew Loader - Alpha Version.");
+        alert("Made by Shadowdev-Vita, SufficientWin8669, and Potential_Cattle7163.");
+        alert("This is a test version, not meant for public release.");
+        run_exploit();
+        load_payload();
+      }, 5000); 
     }
   </script>
 </head>
+<body>
+  <div id="boot-screen">
+    <div class="hb-logo">
+      <div style="width:30px; height:30px; border:4px solid #004d99; transform: rotate(45deg);"></div>
+    </div>
+    <div class="hb-text">Homebrew Launcher</div>
+  </div>
+  <div id="log-container"></div>
 </body>
 </html>
