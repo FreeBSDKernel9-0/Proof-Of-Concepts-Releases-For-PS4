@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Homebrew Loader - Alpha Version<title>
+  <script>
+    const spraySize = 0x10000;
+    const sprayCount = 0x300;
+    let spray = [];
 
+    for (let i = 0; i < sprayCount; i++) {
+      let arr = new Array(spraySize);
+      arr.fill(0x41414141);
+      spray.push(arr);
+    }
+
+    console.log("[+] Heap Spray: 100%");
+
+    let fake = { marker: 0x1337 };
+    console.log("[+] Status: Fake Object Created.");
+
+    const leak = 0xdeadbeef;
+    console.log("[+] Leak: 0x" + leak.toString(16));
+
+    function trigger_rop() {
+      console.log("[*] ROP chain initialized.");
+    }
+
+    trigger_rop();
+  </script>
+  <script>
+    function load_payload() {
+      fetch("payload.bin")
+        .then(res => res.arrayBuffer())
+        .then(buf => {
+          console.log("[+] Payload loaded: " + buf.byteLength + " bytes");
+        })
+        .catch(err => console.error("[-] Payload load failed", err));
+    }
+
+    window.onload = () => {
+      console.log("[+] Exploit interface ready.");
+      load_payload();
+    }
+  </script>
+</head>
+<body>
+  <h1>PS4 WebKit</h1>
+  <p>Initializing exploit...</p>
+</body>
+</html>
