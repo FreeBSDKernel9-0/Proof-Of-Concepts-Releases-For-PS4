@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-<title>Homebrew Loader Alpha Version</title>
+<title>PS4 Homebrew Loader - Alpha Version</title>
   
 <script>
     const spraySize = 0x10000;
@@ -24,7 +24,7 @@
     console.log("[+] Leak: 0x" + leak.toString(16));
 
     function trigger_rop() {
-      console.log("[*] ROP chain initialized.");
+      console.log("[*] Awaiting Payload... (payload.bin) ");
     }
 
     trigger_rop();
@@ -34,9 +34,9 @@
       fetch("payload.bin")
         .then(res => res.arrayBuffer())
         .then(buf => {
-          console.log("[+] Payload loaded: " + buf.byteLength + " bytes");
+          console.log("[+] You're all set!" + buf.byteLength + " bytes");
         })
-        .catch(err => console.error("[-] Payload load failed", err));
+        .catch(err => console.error("[-] Jailbreak failed! Reboot your PS4 and try again.", err));
     }
 
     window.onload = () => {
