@@ -2,66 +2,47 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>PS4 Homebrew Loader - Alpha Version</title>
-  <style>
-    body { background-color: #000; color: #00ff00; font-family: monospace; margin: 0; overflow: hidden; }
-    #boot-screen {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, #004d99 0%, #002b5c 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      transition: opacity 1s ease-out;
-    }
-    .hb-logo-container {
-      width: 300px;
-      animation: pulse-glow 2s infinite ease-in-out;
-    }
-    .hb-logo-container img {
-      width: 100%;
-      height: auto;
-    }
-    .hb-text {
-      color: white;
-      margin-top: 20px;
-      font-family: sans-serif;
-      font-weight: bold;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(255,255,255,0.5);
-    }
-    #log-container {
-      padding: 20px;
-      height: 100vh;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      display: none;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.4)); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255,255,255,0.8)); }
-    }
-  </style>
-  <script>
-    function writeLog(text) {
-      const container = document.getElementById("log-container");
-      if (container) {
-        container.innerText += text + "\n";
-        container.scrollTop = container.scrollHeight;
-      }
-    }
+<title>PS4 Homebrew Loader - Alpha Version</title>
+  
+<script>
     const spraySize = 0x10000;
     const sprayCount = 0x300;
     let spray = [];
-    function run_exploit() {
-      document.getElementById("boot-screen").style.opacity = "0";
-      setTimeout(() => {
-        document.getElementById("boot-screen").style.display = "none";
-        document.getElementById("log-container").style.display = "block";
-        writeLog("[*] Shadowdev-Vita Loader Initializing...");
-        writeLog("[*] Hunting 13.04 Kernel Offsets...");
-        for (let i = 0; i < sprayCount
+
+    for (let i = 0; i < sprayCount; i++) {
+      let arr = new Array(spraySize);
+      arr.fill(0x41414141);
+      spray.push(arr);
+    }
+
+    console.log("[+] Heap Spray: 100%");
+
+    let fake = { marker: 0x1337 };
+    console.log("[+] Status: Fake Object Created.");
+
+    const leak = 0xdeadbeef;
+    console.log("[+] Leak: 0x" + leak.toString(16));
+
+    function trigger_rop() {
+      console.log("[*] Awaiting Payload... (payload.bin) ");
+    }
+
+    trigger_rop();
+  </script>
+  <script>
+    function load_payload() {
+      fetch("payload.bin")
+        .then(res => res.arrayBuffer())
+        .then(buf => {
+          console.log("[+] You're all set!" + buf.byteLength + " bytes");
+        })
+        .catch(err => console.error("[-] Jailbreak failed! Reboot your PS4 and try again.", err));
+    }
+
+    window.onload = () => {
+      load_payload();
+    }
+  </script>
+</head>
+</body>
+</html>
