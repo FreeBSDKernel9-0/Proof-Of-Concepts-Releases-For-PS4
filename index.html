@@ -5,62 +5,167 @@
   <title>PS4 Homebrew Loader - Alpha Version</title>
 
   <script>
-    const spraySize = 0x10000;
-    const sprayCount = 0x300;
-    let spray = [];
+    alert("Welcome to the PS4 Hombrew Loader - Alpha Version.");
+    alert("Made by Shadowdev-Vita, SufficientWin8669. & Potential_Cattle7163.");
 
-    for (let i = 0; i < sprayCount; i++) {
-      let arr = new Array(spraySize);
-      arr.fill(0x41414141);
-      spray.push(arr);
+    let logMessages = [];
+    
+    function addLog(message) {
+      logMessages.push(message);
+      console.log(message);
+      updateLogDisplay();
     }
 
-    console.log("[+] Heap Spray: 100%");
+    function updateLogDisplay() {
+      const logDiv = document.getElementById('log-output');
+      if (logDiv) {
+        logDiv.innerHTML = logMessages.map(msg => `<div>${msg}</div>`).join('');
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    }
 
-    let fake = { marker: 0x1337 };
-    console.log("[+] Status: Fake Object Created.");
+    window.addEventListener('DOMContentLoaded', () => {
+      const spraySize = 0x10000;
+      const sprayCount = 0x300;
+      let spray = [];
 
-    const leak = 0xdeadbeef;
-    console.log("[+] Leak: 0x" + leak.toString(16));
+      for (let i = 0; i < sprayCount; i++) {
+        let arr = new Array(spraySize);
+        arr.fill(0x41414141);
+        spray.push(arr);
+      }
+
+      addLog("[+] Heap Spray: 100%");
+
+      let fake = { marker: 0x1337 };
+      addLog("[+] Status: Fake Object Created.");
+
+      const leak = 0xdeadbeef;
+      addLog("[+] Leak: 0x" + leak.toString(16));
+      
+      load_payload();
+    });
 
     function trigger_rop() {
-      console.log("[*] Awaiting Payload... (payload.bin) ");
+      addLog("[*] Awaiting Payload... (payload.bin) ");
     }
 
     function load_payload() {
       fetch("payload.bin")
         .then(res => res.arrayBuffer())
         .then(buf => {
-          console.log("[+] You're all set!" + buf.byteLength + " bytes");
+          addLog("[+] You're all set!" + buf.byteLength + " bytes");
         })
-        .catch(err => console.error("[-] Jailbreak failed! Reboot your PS4 and try again.", err));
-    }
-
-    window.onload = () => {
-      load_payload();
+        .catch(err => addLog("[-] Jailbreak failed! Reboot your PS4 and try again."));
     }
   </script>
+
   <style>
-    .button {
-      background-color: #4CAF50; /* Green */
-      border: none;
-      color: white;
-      padding: 15px 32px;
+    body {
+      background-color: #000;
+      background-image: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+      color: #fff;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .main-interface {
+      position: relative;
+      width: 800px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+    }
+
+    .logo-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
       text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
+    }
+
+    .logo-container img {
+      width: 200px;
+      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+    }
+
+    #log-output {
+      width: 90%;
+      height: 150px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #00ff00;
+      overflow-y: auto;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .hb-button {
+      width: 180px;
+      height: 60px;
+      background: linear-gradient(to bottom, #f0f0f0 0%, #bcbcbc 100%);
+      border: 3px solid #555;
+      border-radius: 10px;
+      color: #222;
+      font-size: 20px;
+      font-weight: bold;
       cursor: pointer;
-      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #333, 0 8px 15px rgba(0,0,0,0.4);
+      transition: all 0.1s;
+      user-select: none;
+    }
+
+    .hb-button:hover {
+      background: linear-gradient(to bottom, #ffffff 0%, #d0d0d0 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #333, 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    .hb-button:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #333, 0 2px 5px rgba(0,0,0,0.2);
+      background: #999;
     }
   </style>
 </head>
 <body>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Homebrew_Channel_logo.png">
-  <div>
-    <button class="button" onclick="load_payload()">Jailbreak</button>
-    <button class="button" onclick="window.close();">Exit</button>
+
+  <div class="main-interface">
+    <div class="logo-container">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Homebrew_Channel_logo.png">
+    </div>
+
+    <div id="log-output"></div>
+
+    <div class="button-row">
+      <button class="hb-button" onclick="load_payload()">Jailbreak</button>
+      <button class="hb-button" onclick="window.close();">Exit</button>
+    </div>
   </div>
+
 </body>
 </html>
