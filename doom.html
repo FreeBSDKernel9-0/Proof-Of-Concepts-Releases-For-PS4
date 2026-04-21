@@ -1,37 +1,40 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-<title>WebKit Doom (v2.00) - Google Version</title>
+    <meta charset="utf-8">
+    <title>WebKit Doom (v2.01) - Test Version</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        html, body, #jsdos {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: lime;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://js-dos.com/v7/build/releases/latest/js-dos.js"></script>
 </head>
+<body>
+    <div id="jsdos"></div>
+    <script>
+        alert("Awaiting Payload... (doom.bin v2.01) - Google Version"); 
+        alert("Got response! (doom.bin v2.00) - Test Version");
+        alert("waiting for clients");
+        alert("launching payload"); 
+        alert("GoldHEN v1.1 loaded! Coded by SiSTRo"); 
+        alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA V2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
 
-<body style="background:black;color:lime;text-align:center;padding-top:100px;">
-
-<script>
-
-alert("Awaiting Payload... (doom.bin v2.00) - Google Version"); 
-alert("Got response! (doom.bin v2.00) - Google Version");
-alert("waiting for clients");
-alert("launching payload"); 
-alert("GoldHEN v1.1 loaded! Coded by SiSTRo"); 
-alert("Hey, welcome to WebKit Doom v2.00 - Google Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A VERSION SOLELY MEANT FOR USE ON GOOGLE, AS, CURRRENTLY, THE WEBKIT VERSION IS BROKEN AND UNDERGOING MAINTENANCE. Sorry for the inconvenience, -Shadowdev-Vita.");
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Load Doom
-var frame = document.createElement("iframe");
-frame.src = "https://js-dos.com/games/doom.exe.html";
-frame.style.position = "fixed";
-frame.style.top = "0";
-frame.style.left = "0";
-frame.style.height = "100%";
-frame.style.width = "100%";
-frame.style.border = "none";
-document.body.appendChild(frame);
-
-</script>
-
+        Dos(document.getElementById("jsdos"), {
+            style: "none",
+        }).run("https://js-dos.com/games/doom.exe.html").then((runtime) => {
+            console.log("Doom is running!");
+        }).catch((err) => {
+            console.error("Failed to launch Doom:", err);
+        });
+    </script>
 </body>
 </html>
 
