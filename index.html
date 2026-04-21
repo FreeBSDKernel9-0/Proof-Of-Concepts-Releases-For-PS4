@@ -17,16 +17,13 @@
       z-index: 100;
       transition: opacity 1s ease-out;
     }
-    .hb-logo {
-      width: 400px;
-      height: 240px;
-      background-image: url('https://imgur.com');
-      background-size: contain;
-      background-repeat: no-repeat;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: bounce 2s infinite ease-in-out;
+    .hb-logo-container {
+      width: 300px;
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+    .hb-logo-container img {
+      width: 100%;
+      height: auto;
     }
     .hb-text {
       color: white;
@@ -35,6 +32,7 @@
       font-weight: bold;
       letter-spacing: 2px;
       text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
     #log-container {
       padding: 20px;
@@ -43,74 +41,27 @@
       white-space: pre-wrap;
       display: none;
     }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.4)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255,255,255,0.8)); }
     }
   </style>
   <script>
     function writeLog(text) {
-      console.log(text);
       const container = document.getElementById("log-container");
       if (container) {
         container.innerText += text + "\n";
         container.scrollTop = container.scrollHeight;
       }
     }
-
     const spraySize = 0x10000;
     const sprayCount = 0x300;
     let spray = [];
-
     function run_exploit() {
       document.getElementById("boot-screen").style.opacity = "0";
       setTimeout(() => {
         document.getElementById("boot-screen").style.display = "none";
         document.getElementById("log-container").style.display = "block";
-        for (let i = 0; i < sprayCount; i++) {
-          let arr = new Array(spraySize);
-          arr.fill(0x41414141);
-          spray.push(arr);
-        }
-        writeLog("[+] Heap Spray: 100%");
-        let fake = { marker: 0x1337 };
-        writeLog("[+] Status: Fake Object Created.");
-        const leak = 0xdeadbeef;
-        writeLog("[+] Leak: 0x" + leak.toString(16));
-        trigger_rop();
-      }, 1000);
-    }
-
-    function trigger_rop() {
-      writeLog("[*] Awaiting Payload... (payload.bin)");
-    }
-
-    function load_payload() {
-      fetch("payload.bin")
-        .then(res => res.arrayBuffer())
-        .then(buf => {
-          writeLog("[+] You're all set! " + buf.byteLength + " bytes");
-        })
-        .catch(err => writeLog("[-] Jailbreak failed! Reboot your PS4 and try again."));
-    }
-
-    window.onload = () => {
-      setTimeout(() => {
-        alert("Welcome to PS4 Homebrew Loader - Alpha Version.");
-        alert("Made by Shadowdev-Vita, SufficientWin8669, and Potential_Cattle7163.");
-        alert("This is a test version, not meant for public release.");
-        run_exploit();
-        load_payload();
-      }, 5000); 
-    }
-  </script>
-</head>
-<body>
-  <div id="boot-screen">
-    <div class="hb-logo">
-    </div>
-    <div class="hb-text">Homebrew Launcher</div>
-  </div>
-  <div id="log-container"></div>
-</body>
-</html>
+        writeLog("[*] Shadowdev-Vita Loader Initializing...");
+        writeLog("[*] Hunting 13.04 Kernel Offsets...");
+        for (let i = 0; i < sprayCount
