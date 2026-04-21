@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>PS4 Homebrew Loader - Alpha Version</title>
-  
+
   <script>
     const spraySize = 0x10000;
     const sprayCount = 0x300;
@@ -27,9 +27,6 @@
       console.log("[*] Awaiting Payload... (payload.bin) ");
     }
 
-    trigger_rop();
-  </script>
-  <script>
     function load_payload() {
       fetch("payload.bin")
         .then(res => res.arrayBuffer())
@@ -43,8 +40,27 @@
       load_payload();
     }
   </script>
+  <style>
+    .button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 12px;
+    }
+  </style>
 </head>
 <body>
   <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Homebrew_Channel_logo.png">
+  <div>
+    <button class="button" onclick="load_payload()">Jailbreak</button>
+    <button class="button" onclick="window.close();">Exit</button>
+  </div>
 </body>
 </html>
