@@ -1,41 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
     <title>WebKit Doom (v2.01) - Test Version</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        html, body, #jsdos {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: black;
-            color: lime;
-            overflow: hidden;
-        }
+        body { margin: 0; background: #000; overflow: hidden; color: #f00; font-family: monospace; }
+        canvas { width: 100vw; height: 100vh; image-rendering: pixelated; }
     </style>
-    <script src="https://js-dos.com/v7/build/releases/latest/js-dos.js"></script>
 </head>
 <body>
-    <div id="jsdos"></div>
+    <canvas id="c"></canvas>
     <script>
-        alert("Awaiting Payload... (doom.bin v2.01) - Google Version"); 
-        alert("Got response! (doom.bin v2.01) - Test Version");
-        alert("waiting for clients");
-        alert("launching payload"); 
-        alert("GoldHEN v1.1 loaded! Coded by SiSTRo"); 
-        alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA V2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        const screenW = 320; const screenH = 200;
+        canvas.width = screenW; canvas.height = screenH;
 
-        window.addEventListener('load', function() {
-            Dos(document.getElementById("jsdos"), {
-                style: "none"
-            }).run("https://js-dos.com/games/doom.exe.html").then((runtime) => {
-                console.log("Doom is running!");
-            }).catch((err) => {
-                console.error("Failed to launch Doom:", err);
-            });
+        const map = [
+            [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,0,1,1,0,0,1],
+            [1,0,1,0,0,0,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,0,0,0,1,0,0,1],
+            [1,0,1,1,1,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66;
+
+        function render() {
+            ctx.fillStyle = "#333"; ctx.fillRect(0,0,screenW,screenH/2);
+            ctx.fillStyle = "#777"; ctx.fillRect(0,screenH/2,screenW,screenH/2);
+
+            for(let x = 0; x < screenW; x++) {
+                let cameraX = 2 * x / screenW - 1;
+                let rDirX = dirX + planeX * cameraX;
+                let rDirY = dirY + planeY * cameraX;
+                let mX = Math.floor(pX), mY = Math.floor(pY);
+                let dDistX = Math.abs(1 / rDirX), dDistY = Math.abs(1 / rDirY);
+                let sX, sY, sideDistX, sideDistY, hit = 0, side;
+
+                if (rDirX < 0) { sX = -1; sideDistX = (pX - mX) * dDistX; }
+                else { sX = 1; sideDistX = (mX + 1.0 - pX) * dDistX; }
+                if (rDirY < 0) { sY = -1; sideDistY = (pY - mY) * dDistY; }
+                else { sY = 1; sideDistY = (mY + 1.0 - pY) * dDistY; }
+
+                while (hit == 0) {
+                    if (sideDistX < sideDistY) { sideDistX += dDistX; mX += sX; side = 0; }
+                    else { sideDistY += dDistY; mY += sY; side = 1; }
+                    if (map[mX][mY] > 0) hit = 1;
+                }
+
+                let pWDist = (side == 0) ? (sideDistX - dDistX) : (sideDistY - dDistY);
+                let lineH = Math.floor(screenH / pWDist);
+                let drawStart = -lineH / 2 + screenH / 2;
+                let drawEnd = lineH / 2 + screenH / 2;
+
+                ctx.strokeStyle = side == 1 ? "#900" : "#f00";
+                ctx.beginPath(); ctx.moveTo(x, drawStart); ctx.lineTo(x, drawEnd); ctx.stroke();
+            }
+            requestAnimationFrame(render);
+        }
+
+        window.addEventListener('keydown', e => {
+            let moveSpeed = 0.1, rotSpeed = 0.1;
+            if(e.key == 'w') { if(map[Math.floor(pX+dirX*moveSpeed)][Math.floor(pY)] == 0) pX += dirX*moveSpeed; if(map[Math.floor(pX)][Math.floor(pY+dirY*moveSpeed)] == 0) pY += dirY*moveSpeed; }
+            if(e.key == 's') { if(map[Math.floor(pX-dirX*moveSpeed)][Math.floor(pY)] == 0) pX -= dirX*moveSpeed; if(map[Math.floor(pX)][Math.floor(pY-dirY*moveSpeed)] == 0) pY -= dirY*moveSpeed; }
+            if(e.key == 'a') {
+                let oldDirX = dirX; dirX = dirX * Math.cos(rotSpeed) - dirY * Math.sin(rotSpeed); dirY = oldDirX * Math.sin(rotSpeed) + dirY * Math.cos(rotSpeed);
+                let oldPlaneX = planeX; planeX = planeX * Math.cos(rotSpeed) - planeY * Math.sin(rotSpeed); planeY = oldPlaneX * Math.sin(rotSpeed) + planeY * Math.cos(rotSpeed);
+            }
+            if(e.key == 'd') {
+                let oldDirX = dirX; dirX = dirX * Math.cos(-rotSpeed) - dirY * Math.sin(-rotSpeed); dirY = oldDirX * Math.sin(-rotSpeed) + dirY * Math.cos(-rotSpeed);
+                let oldPlaneX = planeX; planeX = planeX * Math.cos(-rotSpeed) - planeY * Math.sin(-rotSpeed); planeY = oldPlaneX * Math.sin(-rotSpeed) + planeY * Math.cos(-rotSpeed);
+            }
         });
+
+        window.onload = () => {
+            alert("Awaiting Payload... (doom.bin v2.01) - Google Version");
+            alert("Got response! (doom.bin v2.01) - Test Version");
+            alert("waiting for clients");
+            alert("launching payload");
+            alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
+            alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA V2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
+            render();
+        };
     </script>
 </body>
 </html>
