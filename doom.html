@@ -21,18 +21,20 @@
     <div id="jsdos"></div>
     <script>
         alert("Awaiting Payload... (doom.bin v2.01) - Google Version"); 
-        alert("Got response! (doom.bin v2.00) - Test Version");
+        alert("Got response! (doom.bin v2.01) - Test Version");
         alert("waiting for clients");
         alert("launching payload"); 
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo"); 
         alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA V2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
 
-        Dos(document.getElementById("jsdos"), {
-            style: "none",
-        }).run("https://js-dos.com/games/doom.exe.html").then((runtime) => {
-            console.log("Doom is running!");
-        }).catch((err) => {
-            console.error("Failed to launch Doom:", err);
+        window.addEventListener('load', function() {
+            Dos(document.getElementById("jsdos"), {
+                style: "none"
+            }).run("https://js-dos.com/games/doom.exe.html").then((runtime) => {
+                console.log("Doom is running!");
+            }).catch((err) => {
+                console.error("Failed to launch Doom:", err);
+            });
         });
     </script>
 </body>
