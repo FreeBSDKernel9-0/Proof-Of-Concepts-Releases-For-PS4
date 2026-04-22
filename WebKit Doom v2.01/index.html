@@ -5,9 +5,16 @@
     <style>
         body { margin: 0; background: #000; overflow: hidden; color: #f00; font-family: monospace; }
         canvas { width: 100vw; height: 100vh; image-rendering: pixelated; }
+        #weapon {
+            position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%); width: 40%; height: auto;
+            pointer-events: none; z-index: 10;
+        }
     </style>
 </head>
 <body>
+    <img id="gun" src="https://raw.githubusercontent.com/id-Software/DOOM/master/base/STGGF0.png" style="display:none">
+    <img id="weapon" src="https://raw.githubusercontent.com/id-Software/DOOM/master/base/SHTGA0.png">
     <canvas id="c"></canvas>
     <script>
         const canvas = document.getElementById('c');
@@ -16,16 +23,65 @@
         canvas.width = screenW; canvas.height = screenH;
 
         const map = [
-            [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,0,1,1,0,0,1],
-            [1,0,1,0,0,0,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,0,0,0,1,0,0,1],
-            [1,0,1,1,1,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
+            [1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,0,1,1,0,0,1],
+            [1,0,1,0,0,0,1,0,0,1],
+            [1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,0,0,0,1,0,0,1],
+            [1,0,1,1,1,1,1,0,0,1],
+            [1,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1]
         ];
 
-        let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66;
+        let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66, vOffset = 0;
+
+        function pollGamepad() {
+            const gps = navigator.getGamepads();
+            if (!gps[0]) return;
+            const gp = gps[0];
+            let ms = 0.1, rs = 0.05;
+
+            if (gp.axes[1] < -0.5 || gp.buttons[12].pressed) {
+                if(map[Math.floor(pX+dirX*ms)][Math.floor(pY)] == 0) pX += dirX*ms;
+                if(map[Math.floor(pX)][Math.floor(pY+dirY*ms)] == 0) pY += dirY*ms;
+            }
+            if (gp.axes[1] > 0.5 || gp.buttons[13].pressed) {
+                if(map[Math.floor(pX-dirX*ms)][Math.floor(pY)] == 0) pX -= dirX*ms;
+                if(map[Math.floor(pX)][Math.floor(pY-dirY*ms)] == 0) pY -= dirY*ms;
+            }
+            if (gp.axes[0] < -0.5 || gp.buttons[14].pressed) {
+                let oldX = dirX; dirX = dirX * Math.cos(rs) - dirY * Math.sin(rs); dirY = oldX * Math.sin(rs) + dirY * Math.cos(rs);
+                let oldP = planeX; planeX = planeX * Math.cos(rs) - planeY * Math.sin(rs); planeY = oldP * Math.sin(rs) + planeY * Math.cos(rs);
+            }
+            if (gp.axes[0] > 0.5 || gp.buttons[15].pressed) {
+                let oldX = dirX; dirX = dirX * Math.cos(-rs) - dirY * Math.sin(-rs); dirY = oldX * Math.sin(-rs) + dirY * Math.cos(-rs);
+                let oldP = planeX; planeX = planeX * Math.cos(-rs) - planeY * Math.sin(-rs); planeY = oldP * Math.sin(-rs) + planeY * Math.cos(-rs);
+            }
+            
+            if (gp.buttons[7].pressed) { 
+                document.getElementById('weapon').style.bottom = "-20px"; 
+                setTimeout(()=>document.getElementById('weapon').style.bottom="0", 100); 
+            }
+            
+            if (gp.buttons[3].pressed) { 
+                alert("Action: Pick Up"); 
+            }
+            
+            if (gp.buttons[0].pressed && vOffset == 0) {
+                let j = 0;
+                let int = setInterval(()=>{ 
+                    vOffset = Math.sin(j)*20; 
+                    j+=0.2; 
+                    if(j>Math.PI){vOffset=0; clearInterval(int);} 
+                }, 20);
+            }
+        }
 
         function render() {
-            ctx.fillStyle = "#333"; ctx.fillRect(0,0,screenW,screenH/2);
-            ctx.fillStyle = "#777"; ctx.fillRect(0,screenH/2,screenW,screenH/2);
+            pollGamepad();
+            ctx.fillStyle = "#222"; ctx.fillRect(0,0,screenW,screenH/2 + vOffset);
+            ctx.fillStyle = "#444"; ctx.fillRect(0,screenH/2 + vOffset,screenW,screenH/2 - vOffset);
 
             for(let x = 0; x < screenW; x++) {
                 let cameraX = 2 * x / screenW - 1;
@@ -48,31 +104,18 @@
 
                 let pWDist = (side == 0) ? (sideDistX - dDistX) : (sideDistY - dDistY);
                 let lineH = Math.floor(screenH / pWDist);
-                let drawStart = -lineH / 2 + screenH / 2;
-                let drawEnd = lineH / 2 + screenH / 2;
+                let drawStart = -lineH / 2 + screenH / 2 + vOffset;
+                let drawEnd = lineH / 2 + screenH / 2 + vOffset;
 
-                ctx.strokeStyle = side == 1 ? "#900" : "#f00";
+                let br = Math.min(200, 1000 / pWDist);
+                ctx.strokeStyle = side == 1 ? `rgb(${br}, 0, 0)` : `rgb(${br/1.5}, 0, 0)`;
                 ctx.beginPath(); ctx.moveTo(x, drawStart); ctx.lineTo(x, drawEnd); ctx.stroke();
             }
             requestAnimationFrame(render);
         }
 
-        window.addEventListener('keydown', e => {
-            let moveSpeed = 0.1, rotSpeed = 0.1;
-            if(e.key == 'w') { if(map[Math.floor(pX+dirX*moveSpeed)][Math.floor(pY)] == 0) pX += dirX*moveSpeed; if(map[Math.floor(pX)][Math.floor(pY+dirY*moveSpeed)] == 0) pY += dirY*moveSpeed; }
-            if(e.key == 's') { if(map[Math.floor(pX-dirX*moveSpeed)][Math.floor(pY)] == 0) pX -= dirX*moveSpeed; if(map[Math.floor(pX)][Math.floor(pY-dirY*moveSpeed)] == 0) pY -= dirY*moveSpeed; }
-            if(e.key == 'a') {
-                let oldDirX = dirX; dirX = dirX * Math.cos(rotSpeed) - dirY * Math.sin(rotSpeed); dirY = oldDirX * Math.sin(rotSpeed) + dirY * Math.cos(rotSpeed);
-                let oldPlaneX = planeX; planeX = planeX * Math.cos(rotSpeed) - planeY * Math.sin(rotSpeed); planeY = oldPlaneX * Math.sin(rotSpeed) + planeY * Math.cos(rotSpeed);
-            }
-            if(e.key == 'd') {
-                let oldDirX = dirX; dirX = dirX * Math.cos(-rotSpeed) - dirY * Math.sin(-rotSpeed); dirY = oldDirX * Math.sin(-rotSpeed) + dirY * Math.cos(-rotSpeed);
-                let oldPlaneX = planeX; planeX = planeX * Math.cos(-rotSpeed) - planeY * Math.sin(-rotSpeed); planeY = oldPlaneX * Math.sin(-rotSpeed) + planeY * Math.cos(-rotSpeed);
-            }
-        });
-
         window.onload = () => {
-            alert("Awaiting Payload... (doom.bin v2.01) - Google Version");
+            alert("Awaiting Payload... (doom.bin v2.01) - Test Version");
             alert("Got response! (doom.bin v2.01) - Test Version");
             alert("waiting for clients");
             alert("launching payload");
@@ -80,17 +123,18 @@
             alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA V2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
             render();
         };
-    </script>
-</body>
-</html>
 
-
-
-
-
-
-
-
+        window.addEventListener('keydown', e => {
+            let ms = 0.1, rs = 0.1;
+            if(e.key == 'w') { if(map[Math.floor(pX+dirX*ms)][Math.floor(pY)] == 0) pX += dirX*ms; if(map[Math.floor(pX)][Math.floor(pY+dirY*ms)] == 0) pY += dirY*ms; }
+            if(e.key == 's') { if(map[Math.floor(pX-dirX*ms)][Math.floor(pY)] == 0) pX -= dirX*ms; if(map[Math.floor(pX)][Math.floor(pY-dirY*ms)] == 0) pY -= dirY*ms; }
+            if(e.key == 'a') {
+                let oldX = dirX; dirX = dirX * Math.cos(rs) - dirY * Math.sin(rs); dirY = oldX * Math.sin(rs) + dirY * Math.cos(rs);
+                let oldP = planeX; planeX = planeX * Math.cos(rs) - planeY * Math.sin(rs); planeY = oldP * Math.sin(rs) + planeY * Math.cos(rs);
+            }
+            if(e.key == 'd') {
+                let oldX = dirX; dirX = dirX * Math.cos(-rs) - dirY * Math.sin(-rs); dirY = oldX * Math.sin(-rs) + dirY * Math.cos(-rs);
+                let oldP = planeX; planeX = planeX * Math.cos(-r
 
 
 
