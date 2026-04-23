@@ -108,7 +108,7 @@
                 let sSX = Math.floor((screenW / 2) * (1 + tX / tY)), sH = Math.abs(Math.floor(screenH / tY));
                 
                 if(tY > 0 && sSX > 0 && sSX < screenW && tY < zBuffer[sSX]) {
-                    ctx.fillStyle = s.type === 'enemy' ? (s.alive ? "#f00" : "#300") : "#fff";
+                    ctx
                     ctx.fillRect(sSX - sH/4, screenH/2 - sH/4, sH/2, sH/2);
                 }
             })
