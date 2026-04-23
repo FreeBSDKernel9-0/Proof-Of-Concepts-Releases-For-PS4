@@ -1,116 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WebKit Doom v2.01</title>
     <style>
-        body { margin: 0; background: #000; overflow: hidden; color: #f00; font-family: monospace; }
-        canvas { width: 100vw; height: 100vh; image-rendering: pixelated; }
-        #ui-layer { position: absolute; top: 10px; right: 20px; text-align: right; z-index: 30; pointer-events: none; }
-        .stat-box { background: rgba(0, 0, 0, 0.7); border: 2px solid #f00; padding: 5px 15px; color: #f00; font-size: 20px; font-weight: bold; box-shadow: 0 0 10px #f00; }
-        #weapon-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40%; pointer-events: none; z-index: 20; }
-        #weapon { width: 100%; height: auto; }
+        body { margin: 0; background: #000; overflow: hidden; }
+        canvas { width: 100vw; height: 100vh; image-rendering: pixelated; display: block; }
     </style>
 </head>
 <body>
-    <div id="ui-layer"><div class="stat-box">HEALTH: <span id="hp-val">220</span>%</div></div>
-    
-    <div id="weapon-container">
-        <div id="weapon" style="width:100px; height:150px; background:#444; margin:0 auto; border-radius:10px 10px 0 0; border:4px solid #222;"></div>
-    </div>
-
     <canvas id="c"></canvas>
-
     <script>
-        
         alert("Awaiting Payload... (doom.bin v2.01)");
         alert("Got response! (doom.bin v2.01)");
+        alert("waiting for clients");
+        alert("launching payload");
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
-        alert("WebKit Doom v2.01 Loaded. Logic check complete.");
+        alert("Hey, welcome to WebKit Doom v2.01. C-Logic Port.");
 
         const canvas = document.getElementById('c');
         const ctx = canvas.getContext('2d');
-        const screenW = 320, screenH = 200;
-        canvas.width = screenW; canvas.height = screenH;
+        const w = 320, h = 200;
+        canvas.width = w; canvas.height = h;
 
-        const map = [
-            [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
-            [1,0,1,1,0,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
-            [1,0,1,1,1,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
+        const imgData = ctx.createImageData(w, h);
+        const buffer = new Uint32Array(imgData.data.buffer);
+
+        let px = 3, py = 3, dx = -1, dy = 0, plx = 0, ply = 0.66;
+        const M = [
+            1,1,1,1,1,1,1,1,
+            1,0,0,0,0,0,0,1,
+            1,0,1,0,0,1,0,1,
+            1,0,0,0,0,0,0,1,
+            1,0,1,0,0,1,0,1,
+            1,0,0,0,0,0,0,1,
+            1,1,1,1,1,1,1,1
         ];
 
-        let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66, vOffset = 0;
-        let hp = 220;
-        let sprites = [{x: 5, y: 5, alive: true, type: 'enemy'}, {x: 3, y: 7, alive: true, type: 'loot'}];
-        let zBuffer = new Array(screenW);
+        function tick() {
+            
+            for(let i=0; i<64000; i++) buffer[i] = i < 32000 ? 0xFF222222 : 0xFF444444;
 
-        function shoot() {
-            const w = document.getElementById('weapon');
-            w.style.transform = "translateY(20px)";
-            sprites.forEach(s => {
-                if(s.type === 'enemy' && s.alive) {
-                    let dx = s.x - pX, dy = s.y - pY;
-                    let dist = Math.hypot(dx, dy);
-                    if(dist < 8) s.alive = false;
+            // Raycaster logic (Exact copy of your C code logic)
+            for(let x = 0; x < w; x++) {
+                let cx = 2 * x / w - 1, rdx = dx + plx * cx, rdy = dy + ply * cx;
+                let mx = Math.floor(px), my = Math.floor(py);
+                let ddx = Math.abs(1/rdx), ddy = Math.abs(1/rdy);
+                let sdx, sdy, sx, sy, hit=0, side;
+
+                if(rdx<0){sx=-1;sdx=(px-mx)*ddx;}else{sx=1;sdx=(mx+1-px)*ddx;}
+                if(rdy<0){sy=-1;sdy=(py-my)*ddy;}else{sy=1;sdy=(my+1-py)*ddy;}
+
+                while(hit==0){
+                    if(sdx<sdy){sdx+=ddx;mx+=sx;side=0;}else{sdy+=ddy;my+=sy;side=1;}
+                    if(M[mx * 8 + my] > 0) hit = 1;
                 }
-            });
-            setTimeout(() => { w.style.transform = "translateY(0)"; }, 100);
+
+                let pwd = side==0 ? sdx-ddx : sdy-ddy, lh = Math.floor(h/(pwd+0.001));
+                let s = Math.max(0, Math.floor(-lh/2+h/2)), e = Math.min(h-1, Math.floor(lh/2+h/2));
+                let col = side==1 ? 0xFF000088 : 0xFF0000CC;
+                for(let y=s; y<e; y++) buffer[y*w+x] = col;
+            }
+            ctx.putImageData(imgData, 0, 0);
+            requestAnimationFrame(tick);
         }
-
-        function pollGamepad() {
-            const gps = navigator.getGamepads(); if (!gps[0]) return; const gp = gps[0];
-            let ms = 0.1, rs = 0.05;
-            if (gp.axes[1] < -0.5 || gp.buttons[12].pressed) {
-                if(map[Math.floor(pX+dirX*ms)][Math.floor(pY)] == 0) pX += dirX*ms;
-                if(map[Math.floor(pX)][Math.floor(pY+dirY*ms)] == 0) pY += dirY*ms;
-            }
-            if (gp.axes[1] > 0.5 || gp.buttons[13].pressed) {
-                if(map[Math.floor(pX-dirX*ms)][Math.floor(pY)] == 0) pX -= dirX*ms;
-                if(map[Math.floor(pX)][Math.floor(pY-dirY*ms)] == 0) pY -= dirY*ms;
-            }
-            if (gp.axes[0] < -0.5 || gp.buttons[14].pressed) {
-                let ox = dirX; dirX = dirX * Math.cos(rs) - dirY * Math.sin(rs); dirY = ox * Math.sin(rs) + dirY * Math.cos(rs);
-                let op = planeX; planeX = planeX * Math.cos(rs) - planeY * Math.sin(rs); planeY = op * Math.sin(rs) + planeY * Math.cos(rs);
-            }
-            if (gp.axes[0] > 0.5 || gp.buttons[15].pressed) {
-                let ox = dirX; dirX = dirX * Math.cos(-rs) - dirY * Math.sin(-rs); dirY = ox * Math.sin(-rs) + dirY * Math.cos(-rs);
-                let op = planeX; planeX = planeX * Math.cos(-rs) - planeY * Math.sin(-rs); planeY = op * Math.sin(-rs) + planeY * Math.cos(-rs);
-            }
-            if (gp.buttons[7].pressed) shoot();
-        }
-
-        function render() {
-            pollGamepad();
-            
-            ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0,0,screenW,screenH/2);
-            ctx.fillStyle = "#333"; ctx.fillRect(0,screenH/2,screenW,screenH/2);
-            
-            
-            for(let x = 0; x < screenW; x++) {
-                let cameraX = 2 * x / screenW - 1;
-                let rDirX = dirX + planeX * cameraX, rDirY = dirY + planeY * cameraX;
-                let mX = Math.floor(pX), mY = Math.floor(pY);
-                let dDX = Math.abs(1 / rDirX), dDY = Math.abs(1 / rDirY);
-                let sX, sY, sDX, sDY, hit = 0, side;
-                if (rDirX < 0) { sX = -1; sDX = (pX - mX) * dDX; } else { sX = 1; sDX = (mX + 1.0 - pX) * dDX; }
-                if (rDirY < 0) { sY = -1; sDY = (pY - mY) * dDY; } else { sY = 1; sDY = (mY + 1.0 - pY) * dDY; }
-                while (hit == 0) { if (sDX < sDY) { sDX += dDX; mX += sX; side = 0; } else { sDY += dDY; mY += sY; side = 1; } if (map[mX][mY] > 0) hit = 1; }
-                let pWD = (side == 0) ? (sDX - dDX) : (sDY - dDY); zBuffer[x] = pWD;
-                let lH = Math.floor(screenH / pWD);
-                ctx.strokeStyle = side == 1 ? "#800" : "#b00";
-                ctx.beginPath(); ctx.moveTo(x, -lH/2 + screenH/2); ctx.lineTo(x, lH/2 + screenH/2); ctx.stroke();
-            }
-
-            
-            sprites.forEach(s => {
-                let dx = s.x - pX, dy = s.y - pY;
-                let invD = 1.0 / (planeX * dirY - dirX * planeY);
-                let tX = invD * (dirY * dx - dirX * dy), tY = invD * (-planeY * dx + planeX * dy);
-                let sSX = Math.floor((screenW / 2) * (1 + tX / tY)), sH = Math.abs(Math.floor(screenH / tY));
-                
-                if(tY > 0 && sSX > 0 && sSX < screenW && tY < zBuffer[sSX]) {
-                    ctx
-                    ctx.fillRect(sSX - sH/4, screenH/2 - sH/4, sH/2, sH/2);
-                }
-            })
+        tick();
+    </script>
 </body>
-
+</html>
