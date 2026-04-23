@@ -1,4 +1,41 @@
- const map = [
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebKit Doom v2.01</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; color: #f00; font-family: monospace; }
+        canvas { width: 100vw; height: 100vh; image-rendering: pixelated; }
+        #ui-layer { position: absolute; top: 10px; right: 20px; text-align: right; z-index: 30; pointer-events: none; }
+        .stat-box { background: rgba(0, 0, 0, 0.7); border: 2px solid #f00; padding: 5px 15px; color: #f00; font-size: 20px; font-weight: bold; box-shadow: 0 0 10px #f00; }
+        #weapon-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40%; pointer-events: none; z-index: 20; }
+        #weapon { width: 100%; height: auto; transition: transform 0.05s; }
+        #flash { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 50%; display: none; filter: brightness(2); }
+    </style>
+</head>
+<body>
+    <div id="ui-layer"><div class="stat-box">HEALTH: <span id="hp-val">220</span>%</div></div>
+    <div id="weapon-container">
+        <img id="flash" src="Assets/flash.png">
+        <img id="weapon" src="Assets/weapon.png">
+    </div>
+    <img id="imp_walk" src="Assets/imp_walk.png" style="display:none">
+    <img id="imp_dead" src="Assets/imp_dead.png" style="display:none">
+    <img id="medkit" src="Assets/medkit.png" style="display:none">
+    <canvas id="c"></canvas>
+    <script>
+        alert("Awaiting Payload... (doom.bin v2.01) - Test Version");
+        alert("Got response! (doom.bin v2.01) - Test Version");
+        alert("waiting for clients");
+        alert("launching payload");
+        alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
+        alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA v2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
+
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        const screenW = 320, screenH = 200;
+        canvas.width = screenW; canvas.height = screenH;
+
+        const map = [
             [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
             [1,0,1,1,0,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
             [1,0,1,1,1,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
@@ -6,7 +43,7 @@
 
         let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66, vOffset = 0;
         let hp = 220, isDead = false;
-        let sprites = [{x: 5, y: 5, alive: true, type: 'enemy', frame: 0}, {x: 3, y: 7, alive: true, type: 'loot'}];
+        let sprites = [{x: 5, y: 5, alive: true, type: 'enemy'}, {x: 3, y: 7, alive: true, type: 'loot'}];
         let zBuffer = new Array(screenW);
 
         function shoot() {
@@ -17,50 +54,10 @@
                 if(s.type === 'enemy' && s.alive) {
                     let dx = s.x - pX, dy = s.y - pY;
                     let angle = Math.abs(Math.atan2(dy, dx) - Math.atan2(dirY, dirX));
-                    if(angle < 0.3 && Math.hypot(dx, dy) < 8) {
-                        s.alive = false;
-                        let dAnim = setInterval(() => { s.frame++; if(s.frame > 4) clearInterval(dAnim); }, 100);
-                    }
+                    if(angle < 0.3 && Math.hypot(dx, dy) < 8) s.alive = false;
                 }
             });
             setTimeout(() => { w.style.transform = "translateY(0)"; f.style.display = "none"; }, 100);
-        }
-
-        function triggerDeathMelt() {
-            isDead = true;
-            document.getElementById('weapon-container').style.display = 'none';
-            document.getElementById('ui-layer').style.display = 'none';
-            const finalFrame = ctx.getImageData(0, 0, screenW, screenH);
-            const meltData = new Uint8ClampedArray(finalFrame.data);
-            const yOffsets = new Array(screenW).fill(0).map(() => Math.random() * -50);
-            let meltProgress = 0;
-            const meltInterval = setInterval(() => {
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, screenW, screenH);
-                for (let x = 0; x < screenW; x++) {
-                    const meltY = yOffsets[x] + meltProgress;
-                    const meltStart = Math.max(0, Math.floor(meltY));
-                    for (let y = screenH - 1; y >= 0; y--) {
-                        if (y >= meltStart) {
-                            const sourceY = Math.max(0, y - Math.floor(meltY));
-                            const sourceIdx = (sourceY * screenW + x) * 4;
-                            const destIdx = (y * screenW + x) * 4;
-                            finalFrame.data[destIdx] = meltData[sourceIdx];
-                            finalFrame.data[destIdx + 1] = meltData[sourceIdx + 1];
-                            finalFrame.data[destIdx + 2] = meltData[sourceIdx + 2];
-                            finalFrame.data[destIdx + 3] = meltData[sourceIdx + 3];
-                        }
-                    }
-                }
-                ctx.putImageData(finalFrame, 0, 0);
-                if(meltProgress > 50) {
-                    const textAlpha = Math.min(1, (meltProgress - 50) / 100);
-                    ctx.font = '60px Times New Roman'; ctx.fillStyle = `rgba(255, 0, 0, ${textAlpha})`;
-                    ctx.textAlign = 'center'; ctx.fillText('Game Over', screenW/2, screenH/2 + 20);
-                }
-                meltProgress += 3;
-                if (meltProgress > screenH + 100) clearInterval(meltInterval);
-            }, 30);
         }
 
         function pollGamepad() {
@@ -84,14 +81,6 @@
                 let op = planeX; planeX = planeX * Math.cos(-rs) - planeY * Math.sin(-rs); planeY = op * Math.sin(-rs) + planeY * Math.cos(-rs);
             }
             if (gp.buttons[7].pressed) shoot();
-            if (gp.buttons[3].pressed) {
-                sprites.forEach(s => {
-                    if(s.type === 'loot' && s.alive && Math.hypot(s.x-pX, s.y-pY) < 1.5) { s.alive = false; hp += 20; document.getElementById('hp-val').innerText = hp; }
-                });
-            }
-            if (gp.buttons[0].pressed && vOffset == 0) {
-                let j = 0; let int = setInterval(()=>{ vOffset = Math.sin(j)*20; j+=0.2; if(j>Math.PI){vOffset=0; clearInterval(int);} }, 20);
-            }
         }
 
         function render() {
@@ -99,6 +88,7 @@
             pollGamepad();
             ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0,0,screenW,screenH/2 + vOffset);
             ctx.fillStyle = "#333"; ctx.fillRect(0,screenH/2 + vOffset,screenW,screenH/2 - vOffset);
+            
             for(let x = 0; x < screenW; x++) {
                 let cameraX = 2 * x / screenW - 1;
                 let rDirX = dirX + planeX * cameraX, rDirY = dirY + planeY * cameraX;
@@ -113,21 +103,21 @@
                 ctx.strokeStyle = side == 1 ? `rgb(${br}, 0, 0)` : `rgb(${br/1.5}, 0, 0)`;
                 ctx.beginPath(); ctx.moveTo(x, -lH/2 + screenH/2 + vOffset); ctx.lineTo(x, lH/2 + screenH/2 + vOffset); ctx.stroke();
             }
+
             sprites.forEach(s => {
                 if(!s.alive && s.type === 'loot') return;
                 let dx = s.x - pX, dy = s.y - pY;
-                let dist = Math.hypot(dx, dy);
-                if(s.type === 'enemy' && s.alive && dist < 1.5 && Math.random() < 0.05) {
-                    hp -= 10; document.getElementById('hp-val').innerText = hp; if(hp <= 0) triggerDeathMelt();
-                }
                 let invD = 1.0 / (planeX * dirY - dirX * planeY);
                 let tX = invD * (dirY * dx - dirX * dy), tY = invD * (-planeY * dx + planeX * dy);
                 let sSX = Math.floor((screenW / 2) * (1 + tX / tY)), sH = Math.abs(Math.floor(screenH / tY));
+                
                 if(tY > 0 && sSX > 0 && sSX < screenW && tY < zBuffer[sSX]) {
-                    if(s.type === 'enemy') {
-                        let fX = s.alive ? 45 : (160 + (s.frame * 50));
-                        ctx.drawImage(document.getElementById('imp'), fX, 50, 40, 55, sSX - sH/2, screenH/2 - sH/2 + vOffset, sH, sH);
-                    } else { ctx.drawImage(document.getElementById('medkit'), sSX - sH/4, screenH/2 + vOffset, sH/2, sH/2); }
+                    if(s.type === 'enemy') 
+                        let img = document.getElementById(s.alive ? 'imp_walk' : 'imp_dead');
+                        ctx.drawImage(img, sSX - sH/2, screenH/2 - sH/2 + vOffset, sH, sH);
+                    } else { 
+                        ctx.drawImage(document.getElementById('medkit'), sSX - sH/4, screenH/2 + vOffset, sH/2, sH/2); 
+                    }
                 }
             });
             requestAnimationFrame(render);
@@ -136,12 +126,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
