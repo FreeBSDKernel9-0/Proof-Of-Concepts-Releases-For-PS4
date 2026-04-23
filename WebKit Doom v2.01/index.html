@@ -21,7 +21,7 @@
     <canvas id="c"></canvas>
 
     <script>
-        // Essential Alerts
+        
         alert("Awaiting Payload... (doom.bin v2.01)");
         alert("Got response! (doom.bin v2.01)");
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
@@ -80,11 +80,11 @@
 
         function render() {
             pollGamepad();
-            // Floor and Ceiling
+            
             ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0,0,screenW,screenH/2);
             ctx.fillStyle = "#333"; ctx.fillRect(0,screenH/2,screenW,screenH/2);
             
-            // Walls
+            
             for(let x = 0; x < screenW; x++) {
                 let cameraX = 2 * x / screenW - 1;
                 let rDirX = dirX + planeX * cameraX, rDirY = dirY + planeY * cameraX;
@@ -100,7 +100,7 @@
                 ctx.beginPath(); ctx.moveTo(x, -lH/2 + screenH/2); ctx.lineTo(x, lH/2 + screenH/2); ctx.stroke();
             }
 
-            // Sprites (Red blocks for enemies, white for loot)
+            
             sprites.forEach(s => {
                 let dx = s.x - pX, dy = s.y - pY;
                 let invD = 1.0 / (planeX * dirY - dirX * planeY);
@@ -111,10 +111,6 @@
                     ctx.fillStyle = s.type === 'enemy' ? (s.alive ? "#f00" : "#300") : "#fff";
                     ctx.fillRect(sSX - sH/4, screenH/2 - sH/4, sH/2, sH/2);
                 }
-            });
-            requestAnimationFrame(render);
-        }
-        render();
-    </script>
+            })
 </body>
 </html>
