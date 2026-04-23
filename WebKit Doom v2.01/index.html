@@ -1,40 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>WebKit Doom v2.01</title>
-    <style>
-        body { margin: 0; background: #000; overflow: hidden; color: #f00; font-family: monospace; }
-        canvas { width: 100vw; height: 100vh; image-rendering: pixelated; }
-        #ui-layer { position: absolute; top: 10px; right: 20px; text-align: right; z-index: 30; pointer-events: none; }
-        .stat-box { background: rgba(0, 0, 0, 0.7); border: 2px solid #f00; padding: 5px 15px; color: #f00; font-size: 20px; font-weight: bold; box-shadow: 0 0 10px #f00; }
-        #weapon-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40%; pointer-events: none; z-index: 20; }
-        #weapon { width: 100%; height: auto; transition: transform 0.05s; }
-        #flash { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 50%; display: none; filter: brightness(2); }
-    </style>
-</head>
-<body>
-    <div id="ui-layer"><div class="stat-box">HEALTH: <span id="hp-val">220</span>%</div></div>
-    <div id="weapon-container">
-        <img id="flash" src="Assets/flash.png">
-        <img id="weapon" src="Assets/weapon.png">
-    </div>
-    <img id="imp" src="Assets/imp.png" style="display:none">
-    <img id="medkit" src="Assets/medkit.png" style="display:none">
-    <canvas id="c"></canvas>
-    <script>
-        alert("Awaiting Payload... (doom.bin v2.01)");
-        alert("Got response! (doom.bin v2.01)");
-        alert("waiting for clients");
-        alert("launching payload");
-        alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
-        alert("Hey, welcome to WebKit Doom v2.01! This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. -Shadowdev-Vita.");
-
-        const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d');
-        const screenW = 320, screenH = 200;
-        canvas.width = screenW; canvas.height = screenH;
-
-        const map = [
+ const map = [
             [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
             [1,0,1,1,0,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],
             [1,0,1,1,1,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
