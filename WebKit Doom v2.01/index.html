@@ -5,62 +5,44 @@
         body { margin: 0; background: #000; overflow: hidden; }
         canvas { width: 100vw; height: 100vh; image-rendering: pixelated; display: block; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/tcc-wasm@1.0.1/dist/tcc-wasm.js"></script>
 </head>
 <body>
     <canvas id="c"></canvas>
     <script>
-        const msgs = ["Awaiting Payload...", "Got response!", "launching payload", "GoldHEN v1.1 loaded!", "WebKit Doom v2.01"];
-        msgs.forEach(m => alert(m));
-
+        ["Awaiting Payload...", "GoldHEN v1.1 loaded!", "WebKit Doom v2.01"].forEach(m => alert(m));
         const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', {alpha: false});
         const w = 320, h = 200;
         canvas.width = w; canvas.height = h;
-
-        // RAW C CODE GOES HERE
-        const cCode = `
-            #define W 320
-            #define H 200
-            unsigned int buf[64000];
-            float px=3.5, py=3.5, dx=-1, dy=0, plx=0, ply=0.66;
-            char M[] = {1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,1, 1,0,1,0,0,1,0,1, 1,0,0,0,0,0,0,1, 1,0,1,0,0,1,0,1, 1,0,0,0,0,0,0,1, 1,1,1,1,1,1,1,1};
-
-            void tick() {
-                for(int i=0; i<64000; i++) buf[i] = (i<32000) ? 0xFF333333 : 0xFF666666;
-                for(int x=0; x<W; x++) {
-                    float cx=2.0*x/W-1, rdx=dx+plx*cx, rdy=dy+ply*cx;
-                    int mx=(int)px, my=(int)py;
-                    float ddx=(rdx==0)?1e10:((rdx<0)?-1/rdx:1/rdx), ddy=(rdy==0)?1e10:((rdy<0)?-1/rdy:1/rdy), sdx, sdy;
-                    int sx, sy, hit=0, side;
-                    if(rdx<0){sx=-1;sdx=(px-mx)*ddx;}else{sx=1;sdx=(mx+1-px)*ddx;}
-                    if(rdy<0){sy=-1;sdy=(py-my)*ddy;}else{sy=1;sdy=(my+1-py)*ddy;}
-                    for(int i=0;i<64&&!hit;i++){
-                        if(sdx<sdy){sdx+=ddx;mx+=sx;side=0;}else{sdy+=ddy;my+=sy;side=1;}
-                        if(M[mx*8+my]>0) hit=1;
-                    }
-                    float pwd=(side==0)?(sdx-ddx):(sdy-ddy);
-                    int lh=(int)(H/(pwd+0.001));
-                    int s=-lh/2+H/2; if(s<0)s=0; int e=lh/2+H/2; if(e>=H)e=H-1;
-                    for(int y=s;y<e;y++) buf[y*W+x]=(side==1)?0xFF0000AA:0xFF0000FF;
+        const img = ctx.createImageData(w, h);
+        const buf = new Uint32Array(img.data.buffer);
+        let px = 3.5, py = 3.5, dx = -1, dy = 0, plx = 0, ply = 0.66;
+        const M = [1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1];
+        function tick() {
+            for(let i=0; i<w*h; i++) buf[i] = i < (w*h/2) ? 0xFF333333 : 0xFF666666;
+            for(let x = 0; x < w; x++) {
+                let cx = 2 * x / w - 1, rdx = dx + plx * cx, rdy = dy + ply * cx;
+                let mx = Math.floor(px), my = Math.floor(py);
+                let ddx = Math.abs(1 / (rdx || 1e-10)), ddy = Math.abs(1 / (rdy || 1e-10));
+                let sx, sy, sdx, sdy, hit = 0, side;
+                if(rdx < 0) { sx = -1; sdx = (px - mx) * ddx; } else { sx = 1; sdx = (mx + 1 - px) * ddx; }
+                if(rdy < 0) { sy = -1; sdy = (py - my) * ddy; } else { sy = 1; sdy = (my + 1 - py) * ddy; }
+                for(let i=0; i<64 && !hit; i++) {
+                    if(sdx < sdy) { sdx += ddx; mx += sx; side = 0; } else { sdy += ddy; my += sy; side = 1; }
+                    if(M[mx * 8 + my] > 0) hit = 1;
+                }
+                if(hit) {
+                    let pwd = side === 0 ? (sdx - ddx) : (sdy - ddy);
+                    let lh = Math.floor(h / (pwd + 0.001));
+                    let s = Math.max(0, Math.floor(-lh/2 + h/2)), e = Math.min(h-1, Math.floor(lh/2 + h/2));
+                    let col = side === 1 ? 0xFF0000AA : 0xFF0000FF;
+                    for(let y = s; y < e; y++) buf[y * w + x] = col;
                 }
             }
-            unsigned int* get_buf() { return buf; }
-        `;
-
-        TCC.compile(cCode).then(mod => {
-            const tick = mod.symbols.tick;
-            const get_buf = mod.symbols.get_buf;
-            const bufPtr = get_buf();
-            const img = new ImageData(new Uint8ClampedArray(mod.memory.buffer, bufPtr, w*h*4), w, h);
-
-            function loop() {
-                tick();
-                ctx.putImageData(img, 0, 0);
-                requestAnimationFrame(loop);
-            }
-            loop();
-        });
+            ctx.putImageData(img, 0, 0);
+            requestAnimationFrame(tick);
+        }
+        tick();
     </script>
 </body>
 </html>
