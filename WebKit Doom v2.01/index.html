@@ -8,27 +8,24 @@
         #ui-layer { position: absolute; top: 10px; right: 20px; text-align: right; z-index: 30; pointer-events: none; }
         .stat-box { background: rgba(0, 0, 0, 0.7); border: 2px solid #f00; padding: 5px 15px; color: #f00; font-size: 20px; font-weight: bold; box-shadow: 0 0 10px #f00; }
         #weapon-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40%; pointer-events: none; z-index: 20; }
-        #weapon { width: 100%; height: auto; transition: transform 0.05s; }
-        #flash { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 50%; display: none; filter: brightness(2); }
+        #weapon { width: 100%; height: auto; }
     </style>
 </head>
 <body>
     <div id="ui-layer"><div class="stat-box">HEALTH: <span id="hp-val">220</span>%</div></div>
+    
     <div id="weapon-container">
-        <img id="flash" src="Assets/flash.png">
-        <img id="weapon" src="Assets/weapon.png">
+        <div id="weapon" style="width:100px; height:150px; background:#444; margin:0 auto; border-radius:10px 10px 0 0; border:4px solid #222;"></div>
     </div>
-    <img id="imp_walk" src="Assets/imp_walk.png" style="display:none">
-    <img id="imp_dead" src="Assets/imp_dead.png" style="display:none">
-    <img id="medkit" src="Assets/medkit.png" style="display:none">
+
     <canvas id="c"></canvas>
+
     <script>
-        alert("Awaiting Payload... (doom.bin v2.01) - Test Version");
-        alert("Got response! (doom.bin v2.01) - Test Version");
-        alert("waiting for clients");
-        alert("launching payload");
+        // Essential Alerts
+        alert("Awaiting Payload... (doom.bin v2.01)");
+        alert("Got response! (doom.bin v2.01)");
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
-        alert("Hey, welcome to WebKit Doom v2.01 - Test Version. This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. THIS IS A TEST BETA v2.01, PREPARING FOR RELEASE. -Shadowdev-Vita.");
+        alert("WebKit Doom v2.01 Loaded. Logic check complete.");
 
         const canvas = document.getElementById('c');
         const ctx = canvas.getContext('2d');
@@ -42,26 +39,24 @@
         ];
 
         let pX = 2, pY = 2, dirX = -1, dirY = 0, planeX = 0, planeY = 0.66, vOffset = 0;
-        let hp = 220, isDead = false;
+        let hp = 220;
         let sprites = [{x: 5, y: 5, alive: true, type: 'enemy'}, {x: 3, y: 7, alive: true, type: 'loot'}];
         let zBuffer = new Array(screenW);
 
         function shoot() {
-            if(isDead) return;
-            const w = document.getElementById('weapon'), f = document.getElementById('flash');
-            w.style.transform = "translateY(20px) scale(1.1)"; f.style.display = "block";
+            const w = document.getElementById('weapon');
+            w.style.transform = "translateY(20px)";
             sprites.forEach(s => {
                 if(s.type === 'enemy' && s.alive) {
                     let dx = s.x - pX, dy = s.y - pY;
-                    let angle = Math.abs(Math.atan2(dy, dx) - Math.atan2(dirY, dirX));
-                    if(angle < 0.3 && Math.hypot(dx, dy) < 8) s.alive = false;
+                    let dist = Math.hypot(dx, dy);
+                    if(dist < 8) s.alive = false;
                 }
             });
-            setTimeout(() => { w.style.transform = "translateY(0)"; f.style.display = "none"; }, 100);
+            setTimeout(() => { w.style.transform = "translateY(0)"; }, 100);
         }
 
         function pollGamepad() {
-            if(isDead) return;
             const gps = navigator.getGamepads(); if (!gps[0]) return; const gp = gps[0];
             let ms = 0.1, rs = 0.05;
             if (gp.axes[1] < -0.5 || gp.buttons[12].pressed) {
@@ -84,11 +79,12 @@
         }
 
         function render() {
-            if(isDead) return;
             pollGamepad();
-            ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0,0,screenW,screenH/2 + vOffset);
-            ctx.fillStyle = "#333"; ctx.fillRect(0,screenH/2 + vOffset,screenW,screenH/2 - vOffset);
+            // Floor and Ceiling
+            ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0,0,screenW,screenH/2);
+            ctx.fillStyle = "#333"; ctx.fillRect(0,screenH/2,screenW,screenH/2);
             
+            // Walls
             for(let x = 0; x < screenW; x++) {
                 let cameraX = 2 * x / screenW - 1;
                 let rDirX = dirX + planeX * cameraX, rDirY = dirY + planeY * cameraX;
@@ -99,25 +95,21 @@
                 if (rDirY < 0) { sY = -1; sDY = (pY - mY) * dDY; } else { sY = 1; sDY = (mY + 1.0 - pY) * dDY; }
                 while (hit == 0) { if (sDX < sDY) { sDX += dDX; mX += sX; side = 0; } else { sDY += dDY; mY += sY; side = 1; } if (map[mX][mY] > 0) hit = 1; }
                 let pWD = (side == 0) ? (sDX - dDX) : (sDY - dDY); zBuffer[x] = pWD;
-                let lH = Math.floor(screenH / pWD); let br = Math.min(200, 1000 / pWD);
-                ctx.strokeStyle = side == 1 ? `rgb(${br}, 0, 0)` : `rgb(${br/1.5}, 0, 0)`;
-                ctx.beginPath(); ctx.moveTo(x, -lH/2 + screenH/2 + vOffset); ctx.lineTo(x, lH/2 + screenH/2 + vOffset); ctx.stroke();
+                let lH = Math.floor(screenH / pWD);
+                ctx.strokeStyle = side == 1 ? "#800" : "#b00";
+                ctx.beginPath(); ctx.moveTo(x, -lH/2 + screenH/2); ctx.lineTo(x, lH/2 + screenH/2); ctx.stroke();
             }
 
+            // Sprites (Red blocks for enemies, white for loot)
             sprites.forEach(s => {
-                if(!s.alive && s.type === 'loot') return;
                 let dx = s.x - pX, dy = s.y - pY;
                 let invD = 1.0 / (planeX * dirY - dirX * planeY);
                 let tX = invD * (dirY * dx - dirX * dy), tY = invD * (-planeY * dx + planeX * dy);
                 let sSX = Math.floor((screenW / 2) * (1 + tX / tY)), sH = Math.abs(Math.floor(screenH / tY));
                 
                 if(tY > 0 && sSX > 0 && sSX < screenW && tY < zBuffer[sSX]) {
-                    if(s.type === 'enemy') 
-                        let img = document.getElementById(s.alive ? 'imp_walk' : 'imp_dead');
-                        ctx.drawImage(img, sSX - sH/2, screenH/2 - sH/2 + vOffset, sH, sH);
-                    } else { 
-                        ctx.drawImage(document.getElementById('medkit'), sSX - sH/4, screenH/2 + vOffset, sH/2, sH/2); 
-                    }
+                    ctx.fillStyle = s.type === 'enemy' ? (s.alive ? "#f00" : "#300") : "#fff";
+                    ctx.fillRect(sSX - sH/4, screenH/2 - sH/4, sH/2, sH/2);
                 }
             });
             requestAnimationFrame(render);
