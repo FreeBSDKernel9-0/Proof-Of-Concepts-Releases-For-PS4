@@ -16,6 +16,7 @@ var Module = {
         }).then(binary => {
             return WebAssembly.instantiate(binary, imports);
         }).then(result => {
+            Module.callMain = result.instance.exports.main || result.instance.exports._main;
             successCallback(result.instance);
         });
         return {}; 
