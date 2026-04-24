@@ -8,10 +8,8 @@ var Module = {
         if (status) status.innerHTML = text;
     },
     monitorRunDependencies: function(left) {
-        
         this.setStatus(left ? "Trying run... (" + left + ")" : "Constructed doom.js");
     },
-    
     instantiateWasm: function(imports, successCallback) {
         fetch('doom.wasm').then(response => {
             return response.arrayBuffer();
@@ -24,8 +22,6 @@ var Module = {
     }
 };
 
-
 (function() {
-    console.log("Payload logic active.");
-    // This is where the WASM core usually starts itself
+    console.log("GET: startup_script.bin");
 })();
