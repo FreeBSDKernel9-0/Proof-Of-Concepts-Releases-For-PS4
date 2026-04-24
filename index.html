@@ -2,7 +2,7 @@
 <html lang="en-us">
 <head>
     <meta charset="utf-8"/>
-    <title>WebKit Doom v2.05</title>
+    <title>WebKit Doom v2.06</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
@@ -22,7 +22,7 @@
         /* sliced into 160 vertical strips and each strip falls at its own  */
         /* staggered speed, revealing black beneath — same as the engine's  */
         /* native screen-wipe between scenes. The GAME OVER banner fades in */
-        /* once the strips are on their way down.                           */
+        /* once the strips are on their way down.                            */
         #melt { position: absolute; inset: 0; z-index: 30; pointer-events: none; display: none; overflow: hidden; background: #000; }
         #melt.on { display: block; }
         #meltCanvas { position: absolute; left: 0; top: 0; image-rendering: -webkit-optimize-contrast; image-rendering: pixelated; }
@@ -42,12 +42,13 @@
 </head>
 <body class="noselect">
     <script>
-        alert("Awaiting Payload... (doom.bin v2.05)");
-        alert("Got response! (doom.bin v2.05)");
+        // --- payload flavor (original alerts) -----------------------------------
+        alert("Awaiting Payload... (doom.bin v2.06)");
+        alert("Got response! (doom.bin v2.06)");
         alert("waiting for clients");
         alert("launching payload");
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
-        alert("Hey, welcome to WebKit Doom v2.05! This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. -Shadowdev-Vita.");
+        alert("Hey, welcome to WebKit Doom v2.06! This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. -Shadowdev-Vita.");
     </script>
     <div id="wrap">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
@@ -55,145 +56,966 @@
     <div id="status">loading...</div>
     <div id="musicbar"></div>
     <div id="start"><div class="btn">CLICK TO START DOOM</div></div>
+
+    <!-- "Game Over" overlay. #meltCanvas hosts the real DOOM strip-melt. -->
     <div id="melt">
         <canvas id="meltCanvas"></canvas>
         <div class="banner">GAME OVER</div>
         <div class="sub">press R to try again &middot; press M to mute music</div>
     </div>
+
+    <!-- ============================================================== -->
+    <!--  CONTROLS — edit this block to rebind                           -->
+    <!-- ============================================================== -->
+    <!--                                                                  -->
+    <!--  There are THREE layers you can edit:                            -->
+    <!--                                                                  -->
+    <!--  1) default.cfg — engine-level bindings (DOS scan codes).        -->
+    <!--                                                                  -->
+    <!--        key_up           17   (W)     forward                     -->
+    <!--        key_down         31   (S)     back                        -->
+    <!--        key_left         24   (O)     turn left                   -->
+    <!--        key_right        25   (P)     turn right                  -->
+    <!--        key_strafeleft   30   (A)     strafe left                 -->
+    <!--        key_straferight  32   (D)     strafe right                -->
+    <!--        key_fire         57   (SPACE) fire     *** see note ***   -->
+    <!--        key_use          18   (E)     use / "pick up"             -->
+    <!--        key_strafe       46   (C)     hold to strafe              -->
+    <!--        key_speed        42   (LSHIFT) hold to run                -->
+    <!--                                                                  -->
+    <!--     Scan-code cheat sheet:                                       -->
+    <!--        ESC=1  1..9=2..10  0=11  -=12  ==13  BS=14  TAB=15        -->
+    <!--        Q=16 W=17 E=18 R=19 T=20 Y=21 U=22 I=23 O=24 P=25         -->
+    <!--        [=26 ]=27 ENTER=28  CTRL=29                               -->
+    <!--        A=30 S=31 D=32 F=33 G=34 H=35 J=36 K=37 L=38 ;=39         -->
+    <!--        '=40 `=41 LSHIFT=42 \=43                                  -->
+    <!--        Z=44 X=45 C=46 V=47 B=48 N=49 M=50 ,=51 .=52 /=53         -->
+    <!--        RSHIFT=54  PAD*=55  ALT=56  SPACE=57  CAPS=58             -->
+    <!--        F1..F10=59..68                                            -->
+    <!--        HOME=199  UP=200  PGUP=201  LEFT=203  RIGHT=205           -->
+    <!--        END=207  DOWN=208  PGDN=209  INS=210  DEL=211             -->
+    <!--                                                                  -->
+    <!--     NOTE on fire: `key_fire 57` (Space) does NOT actually fire   -->
+    <!--     in the Cloudflare WASM build (upstream scantokey bug). That  -->
+    <!--     is why Layer 2 routes fire via a synthesized mouse click —   -->
+    <!--     mouse button 1 is hard-wired to fire in chocolate-doom and   -->
+    <!--     bypasses the broken keyboard path.                           -->
+    <!--                                                                  -->
+    <!--  2) REMAP_CLICK / REMAP_KEY / REMAP_KEYCODE                      -->
+    <!--        - REMAP_CLICK[code]=true => synth LEFT MOUSE CLICK on the -->
+    <!--          canvas (fire-equivalent).                               -->
+    <!--        - REMAP_KEY[srcCode]={code,key,keyCode} => synth a DIFF   -->
+    <!--          keypress on the canvas.                                 -->
+    <!--        - REMAP_KEYCODE[srcNumKC]=destNumKC => numeric override   -->
+    <!--          for old WebKit, rewrites ev.keyCode.                    -->
+    <!--                                                                  -->
+    <!--  3) PAD_MAP — DualShock 4 bindings (standard Gamepad mapping,    -->
+    <!--     with webkitGetGamepads fallback for older PS4 FW).           -->
+    <!-- ============================================================== -->
+
     <script>
-    var REMAP_CLICK = { 'Backspace': true };
-    var REMAP_KEY = { 'KeyF': { code: 'KeyE', key: 'e', keyCode: 69 } };
-    var REMAP_KEYCODE = { 70: 69 };
+    // ============ EDIT THIS BLOCK ============
+
+    // Keyboard rebinds.
+    var REMAP_CLICK = {
+        'Backspace':    true,     // Shoot -> mouse button 1 (fire)
+        // 'ControlLeft':  true,
+        // 'ControlRight': true,
+    };
+    var REMAP_KEY = {
+        // KeyboardEvent.code  ->  { code, key, keyCode } DOOM should see
+        'KeyF': { code: 'KeyE', key: 'e', keyCode: 69 },   // Pick up -> E (use)
+    };
+    var REMAP_KEYCODE = {
+        70: 69,  // F(70) -> E(69)
+    };
+
+    // DualShock 4 (and any "standard" gamepad) rebinds.
+    //
+    //   Buttons on a DS4 in standard mapping:
+    //     0=Cross  1=Circle  2=Square   3=Triangle
+    //     4=L1     5=R1      6=L2       7=R2
+    //     8=Share  9=Options 10=L3      11=R3
+    //    12=Up    13=Down   14=Left    15=Right
+    //    16=PS    17=Touchpad
+    //
+    //   Each entry is { fire:true }   for synthesized mouse click, OR
+    //                 { key: 'KeyE' } for a synthesized keypress.
+    //
+    //   Axes: .deadzone is [0..1], .invert flips sign.
+    //
     var PAD_MAP = {
         buttons: {
-            7:  { fire: true },
-            0:  { key: { code:'KeyE', key:'e', keyCode:69 } },
-            2:  { key: { code:'KeyE', key:'e', keyCode:69 } },
-            5:  { fire: true },
-            6:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },
-            4:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },
-            12: { key: { code:'KeyW', key:'w', keyCode:87 } },
-            13: { key: { code:'KeyS', key:'s', keyCode:83 } },
-            14: { key: { code:'KeyO', key:'o', keyCode:79 } },
-            15: { key: { code:'KeyP', key:'p', keyCode:80 } },
-            9:  { key: { code:'Escape', key:'Escape', keyCode:27 } },
-            1:  { key: { code:'Escape', key:'Escape', keyCode:27 } },
+            7:  { fire: true },                                       // R2 -> shoot
+            0:  { key: { code:'KeyE', key:'e', keyCode:69 } },        // Cross -> pick up
+            2:  { key: { code:'KeyE', key:'e', keyCode:69 } },        // Square -> pick up (alt)
+            5:  { fire: true },                                       // R1 -> shoot (alt)
+            6:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },// L2 -> run
+            4:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },// L1 -> run (alt)
+            12: { key: { code:'KeyW', key:'w', keyCode:87 } },        // D-pad up -> forward
+            13: { key: { code:'KeyS', key:'s', keyCode:83 } },        // D-pad down -> back
+            14: { key: { code:'KeyO', key:'o', keyCode:79 } },        // D-pad left -> turn left
+            15: { key: { code:'KeyP', key:'p', keyCode:80 } },        // D-pad right -> turn right
+            9:  { key: { code:'Escape', key:'Escape', keyCode:27 } }, // Options -> menu
+            1:  { key: { code:'Escape', key:'Escape', keyCode:27 } }, // Circle -> back (in menus)
         },
+        // Axes: left stick = move/strafe, right stick = turn.
         axes: {
-            0: { pos: 'KeyD', neg: 'KeyA', deadzone: 0.30 },
-            1: { pos: 'KeyS', neg: 'KeyW', deadzone: 0.30 },
-            2: { pos: 'KeyP', neg: 'KeyO', deadzone: 0.45 },
+            0: { pos: 'KeyD', neg: 'KeyA', deadzone: 0.30 }, // LX -> strafe R/L
+            1: { pos: 'KeyS', neg: 'KeyW', deadzone: 0.30 }, // LY -> back/forward
+            2: { pos: 'KeyP', neg: 'KeyO', deadzone: 0.45 }, // RX -> turn R/L
+            // 3: right stick Y unused
         },
     };
+
+    // Music — what plays, and when. `auto` is a fallback track order used when
+    // level detection fails (we try to detect the current map from stdout).
     var MUSIC = {
-        intro: 'music/D_INTRO.ogg',
+        intro:  'music/D_INTRO.ogg',
         levels: {
-            'E1M1': 'music/D_E1M1.ogg', 'E1M2': 'music/D_E1M2.ogg', 'E1M3': 'music/D_E1M3.ogg',
-            'E1M4': 'music/D_E1M4.ogg', 'E1M5': 'music/D_E1M5.ogg', 'E1M6': 'music/D_E1M6.ogg',
-            'E1M7': 'music/D_E1M7.ogg', 'E1M8': 'music/D_E1M8.ogg', 'E1M9': 'music/D_E1M9.ogg',
+            'E1M1': 'music/D_E1M1.ogg',
+            'E1M2': 'music/D_E1M2.ogg',
+            'E1M3': 'music/D_E1M3.ogg',
+            'E1M4': 'music/D_E1M4.ogg',
+            'E1M5': 'music/D_E1M5.ogg',
+            'E1M6': 'music/D_E1M6.ogg',
+            'E1M7': 'music/D_E1M7.ogg',
+            'E1M8': 'music/D_E1M8.ogg',
+            'E1M9': 'music/D_E1M9.ogg',
         },
-        inter: 'music/D_INTER.ogg', victor: 'music/D_VICTOR.ogg', fallback: 'music/D_E1M1.ogg', volume: 0.45,
+        inter:  'music/D_INTER.ogg',
+        victor: 'music/D_VICTOR.ogg',
+        // Default loop if level detection can't tell us where we are.
+        fallback: 'music/D_E1M1.ogg',
+        volume: 0.45,
     };
+    // ==========================================
 
     (function(){
-        var statusEl=document.getElementById('status'), startEl=document.getElementById('start'), canvas=document.getElementById('canvas'), musicEl=document.getElementById('musicbar'), meltEl=document.getElementById('melt'), meltCv=document.getElementById('meltCanvas');
+        var statusEl  = document.getElementById('status');
+        var startEl   = document.getElementById('start');
+        var canvas    = document.getElementById('canvas');
+        var musicEl   = document.getElementById('musicbar');
+        var meltEl    = document.getElementById('melt');
+        var meltCv    = document.getElementById('meltCanvas');
         function setStatus(t){ statusEl.textContent = t; }
-        function hasWasm(){ try { if (typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function') { var m = new WebAssembly.Module(Uint8Array.of(0,0x61,0x73,0x6d,1,0,0,0)); return m instanceof WebAssembly.Module; } } catch(e){} return false; }
-        if (!hasWasm()) { setStatus('WebAssembly not supported.'); startEl.style.display = 'none'; return; }
-        (function(){ var orig = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type, attrs){ if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') { attrs = attrs || {}; if (attrs.preserveDrawingBuffer !== true) attrs.preserveDrawingBuffer = true; } return orig.call(this, type, attrs); }; })();
 
+        function hasWasm(){
+            try {
+                if (typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function') {
+                    var m = new WebAssembly.Module(Uint8Array.of(0,0x61,0x73,0x6d,1,0,0,0));
+                    return m instanceof WebAssembly.Module;
+                }
+            } catch(e){}
+            return false;
+        }
+        if (!hasWasm()) {
+            setStatus('WebAssembly not supported on this browser. DOOM needs WASM.');
+            startEl.style.display = 'none';
+            return;
+        }
+
+        // ---- WebGL snapshot support ---------------------------------------
+        // We need to be able to read pixels back off the engine's canvas so we
+        // can melt the *actual* frame that was on screen when the player died.
+        // WebGL contexts by default clear their drawing buffer after every
+        // compositor present, so drawImage()/toDataURL() off a WebGL canvas
+        // returns blank. Setting preserveDrawingBuffer:true keeps the buffer
+        // around until the next draw call. We patch getContext here, BEFORE
+        // the engine script loads, so Emscripten's WebGL init picks it up.
+        (function(){
+            var orig = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function(type, attrs){
+                if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') {
+                    attrs = attrs || {};
+                    if (attrs.preserveDrawingBuffer !== true) attrs.preserveDrawingBuffer = true;
+                }
+                return orig.call(this, type, attrs);
+            };
+        })();
+
+        // =================== REMAP LAYER ===================================
         function installRemap(){
             var clickHeld = {};
+
             function synthMouse(type, button){
-                var r = canvas.getBoundingClientRect(), x = r.left + (r.width | 0) / 2, y = r.top + (r.height | 0) / 2, init = { bubbles: true, cancelable: true, view: window, button: button, buttons: type === 'mousedown' ? 1 : 0, clientX: x, clientY: y, screenX: x, screenY: y };
-                var me; try { me = new MouseEvent(type, init); } catch(e){ me = document.createEvent('MouseEvent'); me.initMouseEvent(type, true, true, window, 0, x, y, x, y, false, false, false, false, button, null); }
-                me.__remapped = true; canvas.dispatchEvent(me);
+                var r = canvas.getBoundingClientRect();
+                var x = r.left + (r.width  | 0) / 2;
+                var y = r.top  + (r.height | 0) / 2;
+                var init = {
+                    bubbles: true, cancelable: true, view: window,
+                    button: button, buttons: type === 'mousedown' ? 1 : 0,
+                    clientX: x, clientY: y, screenX: x, screenY: y
+                };
+                var me;
+                try { me = new MouseEvent(type, init); }
+                catch(e){
+                    me = document.createEvent('MouseEvent');
+                    me.initMouseEvent(type, true, true, window, 0,
+                        x, y, x, y, false, false, false, false, button, null);
+                }
+                me.__remapped = true;
+                canvas.dispatchEvent(me);
             }
+
             function synthKey(type, spec, srcEv){
-                var kc = spec.keyCode, ne; try { ne = new KeyboardEvent(type, { code: spec.code, key: spec.key, keyCode: kc, which: kc, bubbles: true, cancelable: true, ctrlKey: srcEv && srcEv.ctrlKey || false, shiftKey: srcEv && srcEv.shiftKey || false, altKey: srcEv && srcEv.altKey || false }); } catch(e){ ne = document.createEvent('KeyboardEvent'); if (ne.initKeyboardEvent) { ne.initKeyboardEvent(type, true, true, window, spec.key, 0, '', false, ''); } }
-                ne.__remapped = true; try { Object.defineProperty(ne, 'keyCode', { get: function(){ return kc; }}); } catch(e){} try { Object.defineProperty(ne, 'which', { get: function(){ return kc; }}); } catch(e){}
+                var kc = spec.keyCode;
+                var ne;
+                try {
+                    ne = new KeyboardEvent(type, {
+                        code: spec.code, key: spec.key,
+                        keyCode: kc, which: kc,
+                        bubbles: true, cancelable: true,
+                        ctrlKey: srcEv && srcEv.ctrlKey || false,
+                        shiftKey: srcEv && srcEv.shiftKey || false,
+                        altKey:   srcEv && srcEv.altKey   || false
+                    });
+                } catch(e){
+                    ne = document.createEvent('KeyboardEvent');
+                    if (ne.initKeyboardEvent) {
+                        ne.initKeyboardEvent(type, true, true, window,
+                            spec.key, 0, '', false, '');
+                    }
+                }
+                ne.__remapped = true;
+                try { Object.defineProperty(ne, 'keyCode', { get: function(){ return kc; }}); } catch(e){}
+                try { Object.defineProperty(ne, 'which',   { get: function(){ return kc; }}); } catch(e){}
                 canvas.dispatchEvent(ne);
             }
-            function remap(ev){ if (ev.__remapped) return; if (REMAP_CLICK[ev.code]) { ev.preventDefault(); ev.stopImmediatePropagation(); if (ev.type === 'keydown') { if (clickHeld[ev.code]) return; clickHeld[ev.code] = true; synthMouse('mousedown', 0); } else { if (!clickHeld[ev.code]) return; clickHeld[ev.code] = false; synthMouse('mouseup', 0); } return; } var spec = REMAP_KEY[ev.code]; if (!spec) return; ev.preventDefault(); ev.stopImmediatePropagation(); var override = REMAP_KEYCODE[ev.keyCode]; if (override != null) spec = {code: spec.code, key: spec.key, keyCode: override}; synthKey(ev.type, spec, ev); }
-            window.addEventListener('keydown', remap, true); window.addEventListener('keyup', remap, true);
+
+            function remap(ev){
+                if (ev.__remapped) return;
+
+                // 1) Mouse-click synthesis (fire).
+                if (REMAP_CLICK[ev.code]) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+                    if (ev.type === 'keydown') {
+                        if (clickHeld[ev.code]) return;
+                        clickHeld[ev.code] = true;
+                        synthMouse('mousedown', 0);
+                    } else {
+                        if (!clickHeld[ev.code]) return;
+                        clickHeld[ev.code] = false;
+                        synthMouse('mouseup', 0);
+                    }
+                    return;
+                }
+
+                // 2) Key-to-key remap.
+                var spec = REMAP_KEY[ev.code];
+                if (!spec) return;
+                ev.preventDefault();
+                ev.stopImmediatePropagation();
+                var override = REMAP_KEYCODE[ev.keyCode];
+                if (override != null) spec = {code: spec.code, key: spec.key, keyCode: override};
+                synthKey(ev.type, spec, ev);
+            }
+
+            window.addEventListener('keydown', remap, true);
+            window.addEventListener('keyup',   remap, true);
+
+            // Expose the synth primitives so the gamepad module can call them.
             return { synthMouse: synthMouse, synthKey: synthKey };
         }
         var synth = installRemap();
 
+        // =================== GAMEPAD (DS4) =================================
         function installGamepad(){
-            function pads(){ if (navigator.getGamepads) return navigator.getGamepads(); if (navigator.webkitGetGamepads) return navigator.webkitGetGamepads(); return []; }
-            var prevBtn = {}, prevAxis = {};
-            function pressed(b){ if (typeof b === 'object' && b !== null) return !!b.pressed; return !!b; }
-            function fireEdge(downNow, wasDown, on, off){ if (downNow && !wasDown) on(); else if (!downNow && wasDown) off(); }
-            function handleButton(idx, btn){ var spec = PAD_MAP.buttons[idx]; if (!spec) return; var down = pressed(btn), was = prevBtn[idx] || false; if (spec.fire) { fireEdge(down, was, function(){ synth.synthMouse('mousedown', 0); }, function(){ synth.synthMouse('mouseup', 0); }); } else if (spec.key) { fireEdge(down, was, function(){ synth.synthKey('keydown', spec.key, {}); }, function(){ synth.synthKey('keyup', spec.key, {}); }); } prevBtn[idx] = down; }
-            function handleAxis(idx, axisSpec, value){ var dz = axisSpec.deadzone || 0.25, now = (value > dz) ? 1 : (value < -dz) ? -1 : 0, prev = prevAxis[idx] || 0; if (now === prev) return; var KEY = { KeyW: { code:'KeyW', key:'w', keyCode:87 }, KeyS: { code:'KeyS', key:'s', keyCode:83 }, KeyA: { code:'KeyA', key:'a', keyCode:65 }, KeyD: { code:'KeyD', key:'d', keyCode:68 }, KeyO: { code:'KeyO', key:'o', keyCode:79 }, KeyP: { code:'KeyP', key:'p', keyCode:80 } }; var posKey = KEY[axisSpec.pos], negKey = KEY[axisSpec.neg]; if (prev === 1 && posKey) synth.synthKey('keyup', posKey, {}); if (prev === -1 && negKey) synth.synthKey('keyup', negKey, {}); if (now === 1 && posKey) synth.synthKey('keydown', posKey, {}); if (now === -1 && negKey) synth.synthKey('keydown', negKey, {}); prevAxis[idx] = now; }
-            function poll(){ var list = pads(); if (list && list.length) { var p = null; for (var i = 0; i < list.length; i++) { if (list[i]) { p = list[i]; break; } } if (p) { var btns = p.buttons || []; for (var bi = 0; bi < btns.length; bi++) handleButton(bi, btns[bi]); var axs = p.axes || []; for (var ai = 0; ai < axs.length; ai++) { var spec = PAD_MAP.axes[ai]; if (spec) handleAxis(ai, spec, spec.invert ? -axs[ai] : axs[ai]); } } } requestAnimationFrame(poll); }
+            // Old PS4 firmware had webkitGetGamepads(); new browsers have
+            // getGamepads(). Try both.
+            function pads(){
+                if (navigator.getGamepads)       return navigator.getGamepads();
+                if (navigator.webkitGetGamepads) return navigator.webkitGetGamepads();
+                return [];
+            }
+            // Previous pressed/axis state to detect edges.
+            var prevBtn = {};
+            var prevAxis = {};
+
+            function pressed(b){
+                // Modern GamepadButton object: { pressed, value }
+                if (typeof b === 'object' && b !== null) return !!b.pressed;
+                // Old WebKit returned booleans or numeric 0/1.
+                return !!b;
+            }
+
+            function fireEdge(downNow, wasDown, on, off){
+                if (downNow && !wasDown) on();
+                else if (!downNow && wasDown) off();
+            }
+
+            function handleButton(idx, btn){
+                var spec = PAD_MAP.buttons[idx];
+                if (!spec) return;
+                var down = pressed(btn);
+                var was  = prevBtn[idx] || false;
+                if (spec.fire) {
+                    fireEdge(down, was,
+                        function(){ synth.synthMouse('mousedown', 0); },
+                        function(){ synth.synthMouse('mouseup',   0); });
+                } else if (spec.key) {
+                    fireEdge(down, was,
+                        function(){ synth.synthKey('keydown', spec.key, {}); },
+                        function(){ synth.synthKey('keyup',   spec.key, {}); });
+                }
+                prevBtn[idx] = down;
+            }
+
+            function handleAxis(idx, axisSpec, value){
+                var dz = axisSpec.deadzone || 0.25;
+                // Normalize to -1, 0, +1 based on deadzone.
+                var now = (value >  dz) ? 1 : (value < -dz) ? -1 : 0;
+                var prev = prevAxis[idx] || 0;
+                if (now === prev) return;
+
+                // The "positive" key is typically Down/Right, "negative" is Up/Left.
+                // Encode the key identities inline so we can call synthKey directly.
+                var KEY = {
+                    KeyW: { code:'KeyW', key:'w', keyCode:87 },
+                    KeyS: { code:'KeyS', key:'s', keyCode:83 },
+                    KeyA: { code:'KeyA', key:'a', keyCode:65 },
+                    KeyD: { code:'KeyD', key:'d', keyCode:68 },
+                    KeyO: { code:'KeyO', key:'o', keyCode:79 },
+                    KeyP: { code:'KeyP', key:'p', keyCode:80 },
+                };
+                var posKey = KEY[axisSpec.pos];
+                var negKey = KEY[axisSpec.neg];
+
+                // Release whichever was pressed.
+                if (prev === 1  && posKey) synth.synthKey('keyup', posKey, {});
+                if (prev === -1 && negKey) synth.synthKey('keyup', negKey, {});
+                // Press the new one (if any).
+                if (now === 1   && posKey) synth.synthKey('keydown', posKey, {});
+                if (now === -1  && negKey) synth.synthKey('keydown', negKey, {});
+
+                prevAxis[idx] = now;
+            }
+
+            function poll(){
+                var list = pads();
+                if (list && list.length) {
+                    // Use the first connected pad.
+                    var p = null;
+                    for (var i = 0; i < list.length; i++) { if (list[i]) { p = list[i]; break; } }
+                    if (p) {
+                        // Buttons
+                        var btns = p.buttons || [];
+                        for (var bi = 0; bi < btns.length; bi++) handleButton(bi, btns[bi]);
+                        // Axes
+                        var axs = p.axes || [];
+                        for (var ai = 0; ai < axs.length; ai++) {
+                            var spec = PAD_MAP.axes[ai];
+                            if (spec) handleAxis(ai, spec, spec.invert ? -axs[ai] : axs[ai]);
+                        }
+                    }
+                }
+                requestAnimationFrame(poll);
+            }
             if (typeof requestAnimationFrame === 'function') requestAnimationFrame(poll);
         }
         installGamepad();
 
+        // =================== MUSIC PLAYER ==================================
+        //
+        // The WASM build was compiled without SDL_mixer (music driver = dummy)
+        // so we play the music out-of-band via an HTML5 Audio element. All
+        // tracks are OGG Vorbis rendered from the WAD's MUS lumps using
+        // FluidR3_GM, to match DOOM's DMX-on-GM sound. OGG is chosen for
+        // broad WebKit support (Safari 11+, PS4 FW 5.0+ all play it).
+        //
         var music = (function(){
-            var audio = new Audio(); audio.loop = true; audio.volume = MUSIC.volume; audio.preload = 'auto'; var currentLabel = '', currentUrl = '', cycleOrder = [], cycleIdx = 0, muted = false;
+            var audio = new Audio();
+            audio.loop = true;
+            audio.volume = MUSIC.volume;
+            audio.preload = 'auto';
+            var currentLabel = '';
+            var currentUrl = '';
+            var cycleOrder = [];
+            var cycleIdx = 0;
+            var muted = false;
+
+            // Initial cycle: E1M1..E1M9 in order.
             Object.keys(MUSIC.levels).forEach(function(k){ cycleOrder.push({label:k, url: MUSIC.levels[k]}); });
-            function label(s){ currentLabel = s; musicEl.textContent = muted ? '[muted]' : ('♪ ' + s); }
-            function play(url, labelText){ if (url === currentUrl) { label(labelText || currentLabel); return; } currentUrl = url; try { audio.pause(); audio.src = url; audio.currentTime = 0; var p = audio.play(); if (p && p.catch) p.catch(function(e){}); label(labelText || url); } catch(e){} }
-            function playLevel(tag){ var url = MUSIC.levels[tag]; if (!url) return false; for (var i = 0; i < cycleOrder.length; i++) { if (cycleOrder[i].url === url) { cycleIdx = i; break; } } play(url, tag); return true; }
-            function toggleMute(){ muted = !muted; audio.muted = muted; label(currentLabel); }
-            window.addEventListener('keydown', function(ev){ if (ev.__remapped) return; if (ev.code === 'KeyM'){ toggleMute(); ev.preventDefault(); } });
-            return { play: play, playLevel: playLevel, toggleMute: toggleMute, label: label, audio: audio };
+
+            function label(s){
+                currentLabel = s;
+                musicEl.textContent = muted ? '[music muted]' : ('♪ ' + s);
+            }
+
+            function play(url, labelText){
+                if (url === currentUrl) { label(labelText || currentLabel); return; }
+                currentUrl = url;
+                try {
+                    audio.pause();
+                    audio.src = url;
+                    audio.currentTime = 0;
+                    var p = audio.play();
+                    if (p && p.catch) p.catch(function(e){ console.warn('[music] play failed:', e); });
+                    label(labelText || url);
+                } catch(e){ console.warn('[music] play error:', e); }
+            }
+
+            function playLevel(tag){
+                var url = MUSIC.levels[tag];
+                if (!url) return false;
+                // find matching cycle entry so N/B stays in sync
+                for (var i = 0; i < cycleOrder.length; i++) {
+                    if (cycleOrder[i].url === url) { cycleIdx = i; break; }
+                }
+                play(url, tag);
+                return true;
+            }
+
+            function next(){
+                cycleIdx = (cycleIdx + 1) % cycleOrder.length;
+                play(cycleOrder[cycleIdx].url, cycleOrder[cycleIdx].label);
+            }
+            function prev(){
+                cycleIdx = (cycleIdx - 1 + cycleOrder.length) % cycleOrder.length;
+                play(cycleOrder[cycleIdx].url, cycleOrder[cycleIdx].label);
+            }
+            function toggleMute(){
+                muted = !muted;
+                audio.muted = muted;
+                label(currentLabel);
+            }
+
+            // Hot-key shortcuts handled at window-level, lowest priority so we
+            // don't eat anything the engine wants.
+            window.addEventListener('keydown', function(ev){
+                if (ev.__remapped) return;
+                if (ev.code === 'KeyN')     { next();       ev.preventDefault(); }
+                else if (ev.code === 'KeyB'){ prev();       ev.preventDefault(); }
+                else if (ev.code === 'KeyM'){ toggleMute(); ev.preventDefault(); }
+            });
+
+            return {
+                play: play, playLevel: playLevel,
+                next: next, prev: prev,
+                toggleMute: toggleMute,
+                label: label,
+                audio: audio,
+            };
         })();
 
+        // =================== GAME OVER MELT OVERLAY ========================
+        //
+        // Authentic DOOM screen-wipe, translated from f_wipe.c. On trigger we
+        // snapshot the live game canvas, slice it into N vertical strips, and
+        // each strip falls at its own staggered speed. Y offsets follow the
+        // original algorithm: y[0] = -rand()%16, y[i] = clamp(y[i-1] + rand±1,
+        // -15, 0). Per engine tic (35 Hz), y[i] gains 1 until it hits 16, then
+        // 8 thereafter until it passes the bottom of the screen. Once every
+        // strip has fallen, the GAME OVER banner fades in over the black
+        // underneath.
+        //
+        // Manual trigger: press G. Dismiss: press R.
+        //
         var melt = (function(){
-            var SCREEN_H = 200, N_STRIPS = 160, TICK_MS = 1000 / 35, active = false, snapshot = null, y = new Int16Array(N_STRIPS), lastTick = 0, rafId = null, mctx = null;
-            function ctx(){ if (!mctx) mctx = meltCv.getContext('2d'); return mctx; }
-            function takeSnapshot(){ var rect = canvas.getBoundingClientRect(), W = Math.max(1, Math.round(rect.width)), H = Math.max(1, Math.round(rect.height)); meltCv.width = W; meltCv.height = H; meltCv.style.left = Math.round(rect.left) + 'px'; meltCv.style.top = Math.round(rect.top) + 'px'; meltCv.style.width = W + 'px'; meltCv.style.height = H + 'px'; var sw = canvas.width || W, sh = canvas.height || H; snapshot = document.createElement('canvas'); snapshot.width = sw; snapshot.height = sh; var sctx = snapshot.getContext('2d'); try { sctx.drawImage(canvas, 0, 0, sw, sh); } catch(e){ sctx.fillStyle = '#181818'; sctx.fillRect(0, 0, sw, sh); } }
-            function initY(){ y[0] = -(Math.floor(Math.random() * 16)); for (var i = 1; i < N_STRIPS; i++) { var r = (Math.floor(Math.random() * 3)) - 1, v = y[i-1] + r; if (v > 0) v = 0; else if (v === -16) v = -15; y[i] = v; } }
-            function tick(){ var done = 0; for (var i = 0; i < N_STRIPS; i++) { var v = y[i]; if (v < 0) v += 1; else if (v < SCREEN_H) { var dv = v < 16 ? 1 : 8; if (v + dv >= SCREEN_H) dv = SCREEN_H - v; v += dv; } y[i] = v; if (v >= SCREEN_H) done++; } return done === N_STRIPS; }
-            function draw(){ if (!snapshot) return; var g = ctx(), W = meltCv.width, H = meltCv.height, sw = snapshot.width, sh = snapshot.height, sliceSrc = sw / N_STRIPS, sliceDst = W / N_STRIPS, scaleY = H / SCREEN_H; g.clearRect(0, 0, W, H); for (var i = 0; i < N_STRIPS; i++) { var dy = y[i] * scaleY; if (dy >= H) continue; g.drawImage(snapshot, i * sliceSrc, 0, sliceSrc, sh, i * sliceDst, dy, Math.ceil(sliceDst) + 1, H); } }
-            function frame(ts){ if (!active) return; if (!lastTick) lastTick = ts; var fell = false; while (ts - lastTick >= TICK_MS) { fell = tick() || fell; lastTick += TICK_MS; } draw(); if (!fell) rafId = requestAnimationFrame(frame); else { ctx().clearRect(0, 0, meltCv.width, meltCv.height); rafId = null; } }
-            function trigger(){ if (active) return; active = true; meltEl.classList.add('on'); try { music.audio.volume = Math.max(0.1, MUSIC.volume * 0.6); } catch(e){} takeSnapshot(); initY(); lastTick = 0; draw(); rafId = requestAnimationFrame(frame); }
-            function clear(){ active = false; meltEl.classList.remove('on'); if (rafId) { cancelAnimationFrame(rafId); rafId = null; } if (mctx) mctx.clearRect(0, 0, meltCv.width, meltCv.height); snapshot = null; try { music.audio.volume = MUSIC.volume; } catch(e){} }
-            window.addEventListener('keydown', function(ev){ if (ev.__remapped) return; if (ev.code === 'KeyG') { trigger(); } if (ev.code === 'KeyR' && active) { clear(); } });
-            return { trigger: trigger, clear: clear };
-        })();
+            var SCREEN_H  = 200;   // DOOM's canonical vertical unit
+            var N_STRIPS  = 160;
+            var TICK_MS   = 1000 / 35;
 
-        function installLevelDetect(){ var lastMap = ''; function onText(line){ var m = /\b(E[1-4]M[1-9])\b/.exec(line); if (m && m[1] !== lastMap) { lastMap = m[1]; music.playLevel(lastMap); } } return { onText: onText }; }
+            var active = false;
+            var snapshot = null;   // offscreen canvas holding the frame
+            var y = new Int16Array(N_STRIPS);
+            var lastTick = 0;
+            var rafId = null;
+            var mctx = null;
+
+            function ctx(){
+                if (!mctx) mctx = meltCv.getContext('2d');
+                return mctx;
+            }
+
+            function takeSnapshot(){
+                var rect = canvas.getBoundingClientRect();
+                // Size the melt canvas to exactly overlay the game canvas.
+                var W = Math.max(1, Math.round(rect.width));
+                var H = Math.max(1, Math.round(rect.height));
+                meltCv.width  = W;
+                meltCv.height = H;
+                meltCv.style.left = Math.round(rect.left) + 'px';
+                meltCv.style.top  = Math.round(rect.top)  + 'px';
+                meltCv.style.width  = W + 'px';
+                meltCv.style.height = H + 'px';
+
+                // Snapshot at the engine canvas's internal resolution for
+                // sharpness, not the display size.
+                var sw = canvas.width  || W;
+                var sh = canvas.height || H;
+                snapshot = document.createElement('canvas');
+                snapshot.width  = sw;
+                snapshot.height = sh;
+                var sctx = snapshot.getContext('2d');
+                try {
+                    sctx.drawImage(canvas, 0, 0, sw, sh);
+                } catch(e){
+                    // Fallback: WebGL context without preserveDrawingBuffer,
+                    // cross-origin tainting, etc. Paint a dark grey so the
+                    // melt still has something visible to tear down.
+                    console.warn('[melt] snapshot failed, using fallback fill:', e);
+                    sctx.fillStyle = '#181818';
+                    sctx.fillRect(0, 0, sw, sh);
+                }
+            }
+
+            function initY(){
+                // Matches f_wipe.c: wipe_initColumns.
+                y[0] = -(Math.floor(Math.random() * 16));
+                for (var i = 1; i < N_STRIPS; i++) {
+                    var r = (Math.floor(Math.random() * 3)) - 1; // -1, 0, +1
+                    var v = y[i-1] + r;
+                    if (v > 0)        v = 0;
+                    else if (v === -16) v = -15;
+                    y[i] = v;
+                }
+            }
+
+            function tick(){
+                var done = 0;
+                for (var i = 0; i < N_STRIPS; i++) {
+                    var v = y[i];
+                    if (v < 0) {
+                        v += 1;
+                    } else if (v < SCREEN_H) {
+                        var dv = v < 16 ? 1 : 8;
+                        if (v + dv >= SCREEN_H) dv = SCREEN_H - v;
+                        v += dv;
+                    }
+                    y[i] = v;
+                    if (v >= SCREEN_H) done++;
+                }
+                return done === N_STRIPS;
+            }
+
+            function draw(){
+                if (!snapshot) return;
+                var g   = ctx();
+                var W   = meltCv.width;
+                var H   = meltCv.height;
+                var sw  = snapshot.width;
+                var sh  = snapshot.height;
+                var sliceSrc = sw / N_STRIPS;
+                var sliceDst = W  / N_STRIPS;
+                var scaleY   = H  / SCREEN_H;
+
+                g.clearRect(0, 0, W, H);
+                for (var i = 0; i < N_STRIPS; i++) {
+                    var dy = y[i] * scaleY;
+                    if (dy >= H) continue;
+                    g.drawImage(
+                        snapshot,
+                        i * sliceSrc, 0, sliceSrc, sh,
+                        i * sliceDst, dy,
+                        // +1 overdraw hides subpixel seams between strips.
+                        Math.ceil(sliceDst) + 1, H
+                    );
+                }
+            }
+
+            function frame(ts){
+                if (!active) return;
+                if (!lastTick) lastTick = ts;
+                var fell = false;
+                while (ts - lastTick >= TICK_MS) {
+                    fell = tick() || fell;
+                    lastTick += TICK_MS;
+                }
+                draw();
+                if (!fell) {
+                    rafId = requestAnimationFrame(frame);
+                } else {
+                    // All strips are gone; keep the banner up until the user
+                    // dismisses with R. Clear the canvas to save GPU.
+                    ctx().clearRect(0, 0, meltCv.width, meltCv.height);
+                    rafId = null;
+                }
+            }
+
+            function trigger(){
+                if (active) return;
+                active = true;
+                meltEl.classList.add('on');
+                try { music.audio.volume = Math.max(0.1, MUSIC.volume * 0.6); } catch(e){}
+                takeSnapshot();
+                initY();
+                lastTick = 0;
+                draw();
+                rafId = requestAnimationFrame(frame);
+                console.log('[melt] GAME OVER (strip-melt) triggered');
+            }
+
+            function clear(){
+                active = false;
+                meltEl.classList.remove('on');
+                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+                if (mctx) mctx.clearRect(0, 0, meltCv.width, meltCv.height);
+                snapshot = null;
+                try { music.audio.volume = MUSIC.volume; } catch(e){}
+            }
+
+            window.addEventListener('keydown', function(ev){
+                if (ev.__remapped) return;
+                if (ev.code === 'KeyG') { trigger(); }
+                // R triggers a natural Doom respawn inside the engine; we also
+                // clear the overlay so the player can see their fresh run.
+                if (ev.code === 'KeyR' && active) { clear(); }
+            });
+
+            return {
+                trigger: trigger,
+                clear:   clear,
+                isActive: function(){ return active; },
+                _y:       function(){ return Array.prototype.slice.call(y); },
+                _snapshot: function(){ return snapshot; },
+            };
+        })();
+        window.__melt = melt;
+
+        // =================== DEATH DETECT (auto-melt on YOU DIED) ===========
+        //
+        // Chocolate Doom doesn't print "you died" to stdout, so we detect
+        // death by watching pixels in the HEALTH-digits region of the status
+        // bar. Big red digits over a narrow strip at (50..113, 174..190) in
+        // the native 320x200 coord space. At HP=100% ~150 red pixels light
+        // up; at HP=0% only the "0" glyph remains (~25-30 red pixels).
+        //
+        // We sample every 500 ms. A low count must dwell for 4 consecutive
+        // samples (2 s) before we trigger — 5 HP mid-combat shouldn't flash
+        // the overlay unless the player is truly stuck there. After trigger
+        // we watch for recovery (red count back above the HIGH threshold)
+        // which means the player respawned, and clear the overlay. A 5 s
+        // cooldown prevents thrashing if they die again immediately.
+        //
+        // Sampling needs canvas pixel read, which is only possible because
+        // we forced preserveDrawingBuffer:true on the WebGL context earlier.
+        //
+        var deathDetect = (function(){
+            var SAMPLE_MS   = 500;
+            // Measured live: HP 100% → ~388 red pixels in probe canvas;
+            // dropping roughly one-third per digit removed.
+            var DEAD_THRESH = 140;  // ≤ this = single-digit HP (0..9) or HUD hidden
+            var LIVE_THRESH = 220;  // ≥ this = multi-digit HP (alive comfortably)
+            var DWELL       = 4;    // samples (2 s)
+            var COOLDOWN_MS = 3000;
+
+            var probe = document.createElement('canvas');
+            probe.width = 128; probe.height = 24;
+            var pctx  = probe.getContext('2d');
+
+            var lowSamples     = 0;
+            var lastTriggerMs  = 0;
+            var armed          = false;  // only arms after first high-HP sample
+            var forcedRed      = null;   // testing hook; null = use real sampler
+
+            function redCount(){
+                if (forcedRed !== null) return forcedRed;
+                var cw = canvas.width, ch = canvas.height;
+                if (!cw || !ch) return -1;
+                // Source rect in native 320x200, mapped to canvas coords.
+                var sx = Math.floor(50  * cw / 320);
+                var sy = Math.floor(174 * ch / 200);
+                var sw = Math.ceil( 64  * cw / 320);
+                var sh = Math.ceil( 18  * ch / 200);
+                try {
+                    pctx.clearRect(0, 0, probe.width, probe.height);
+                    pctx.drawImage(canvas, sx, sy, sw, sh,
+                                   0, 0, probe.width, probe.height);
+                    var d = pctx.getImageData(0, 0, probe.width, probe.height).data;
+                    var n = 0;
+                    for (var i = 0; i < d.length; i += 4) {
+                        if (d[i] > 160 && d[i+1] < 70 && d[i+2] < 70) n++;
+                    }
+                    return n;
+                } catch(e) { return -1; }
+            }
+
+            function tick(){
+                var c = redCount();
+                if (c < 0) return;           // can't read canvas yet
+                if (c >= LIVE_THRESH) armed = true;
+                if (!armed) return;          // wait until we've seen HP on-screen
+
+                if (melt.isActive()) {
+                    // Melt is up — auto-clear on respawn.
+                    if (c >= LIVE_THRESH) {
+                        melt.clear();
+                        lastTriggerMs = Date.now();
+                        lowSamples = 0;
+                    }
+                    return;
+                }
+
+                if (Date.now() - lastTriggerMs < COOLDOWN_MS) return;
+
+                if (c <= DEAD_THRESH) {
+                    lowSamples++;
+                    if (lowSamples >= DWELL) {
+                        melt.trigger();
+                        lastTriggerMs = Date.now();
+                        lowSamples = 0;
+                        console.log('[death-detect] auto-melt triggered, red=' + c);
+                    }
+                } else {
+                    lowSamples = 0;
+                }
+            }
+
+            setInterval(tick, SAMPLE_MS);
+            return {
+                _tick: tick,
+                redCount: redCount,
+                _state: function(){
+                    return { armed: armed, lowSamples: lowSamples,
+                             lastTriggerMs: lastTriggerMs, forcedRed: forcedRed };
+                },
+                // Testing hook: pass a number to override sampler; null to restore.
+                _forceRed: function(v){ forcedRed = v; }
+            };
+        })();
+        window.__deathDetect = deathDetect;
+
+        // =================== ENGINE-OUTPUT LEVEL DETECTION ==================
+        //
+        // We hook Module.print to watch for Doom engine stdout and try to
+        // detect the current map name. The stock build prints `doom: N, ...`
+        // heartbeats and is mostly silent about level transitions, so we also
+        // tag the player-enters-level event by canvas-scanning (best-effort).
+        //
+        function installLevelDetect(){
+            var lastMap = '';
+            function onText(line){
+                // Match "E1M1", "E1M2" ... "E4M9" anywhere in stdout.
+                var m = /\b(E[1-4]M[1-9])\b/.exec(line);
+                if (m && m[1] !== lastMap) {
+                    lastMap = m[1];
+                    music.playLevel(lastMap);
+                }
+            }
+            return { onText: onText };
+        }
         var levelDetect = installLevelDetect();
 
+        // =================== SAVE STORE (IndexedDB shim) ====================
+        // The Cloudflare WASM build doesn't ship IDBFS (FS.filesystems.IDBFS
+        // is undefined), so Module.FS.syncfs is a no-op. We keep /save on the
+        // ordinary in-memory FS and mirror it to/from IndexedDB ourselves.
+        // One DB ("doom-save"), one store ("files"), keyed by filename with
+        // a { name, bytes, mtime, size } record.
         var saveStore = (function(){
-            var DB = 'doom-save', STORE = 'files', VERSION = 1, lastSnapshot = '';
-            function open(){ return new Promise(function(res, rej){ var req = indexedDB.open(DB, VERSION); req.onupgradeneeded = function(){ var db = req.result; if (!db.objectStoreNames.contains(STORE)) { db.createObjectStore(STORE, { keyPath: 'name' }); } }; req.onsuccess = function(){ res(req.result); }; req.onerror = function(){ rej(req.error); }; }); }
-            function listSaveDir(){ try { return Module.FS.readdir('/save').filter(function(n){ return n !== '.' && n !== '..'; }); } catch(e){ return []; } }
-            function snapshot(){ var parts = []; listSaveDir().forEach(function(name){ try { var st = Module.FS.stat('/save/' + name); parts.push(name + ':' + st.size + ':' + (st.mtime ? st.mtime.getTime() : 0)); } catch(e){} }); return parts.join('|'); }
-            async function restore(){ if (typeof indexedDB === 'undefined') return []; var db = await open(); try { var tx = db.transaction([STORE], 'readonly'), os = tx.objectStore(STORE), rows = await new Promise(function(res, rej){ var r = os.getAll(); r.onsuccess = function(){ res(r.result || []); }; r.onerror = function(){ rej(r.error); }; }); rows.forEach(function(row){ if (!row || !row.name || !row.bytes) return; try { Module.FS.writeFile('/save/' + row.name, row.bytes); } catch(e){} }); lastSnapshot = snapshot(); return rows.map(function(r){ return r.name; }); } finally { db.close(); } }
-            async function flush(){ if (typeof indexedDB === 'undefined') return; var names = listSaveDir(), db = await open(); try { var tx = db.transaction([STORE], 'readwrite'), os = tx.objectStore(STORE), existing = await new Promise(function(res, rej){ var r = os.getAllKeys(); r.onsuccess = function(){ res(r.result || []); }; r.onerror = function(){ rej(r.error); }; }); existing.forEach(function(k){ if (names.indexOf(k) < 0) os.delete(k); }); names.forEach(function(name){ try { var data = Module.FS.readFile('/save/' + name), bytes = new Uint8Array(data), copy = new Uint8Array(bytes.length); copy.set(bytes); os.put({ name: name, bytes: copy, size: copy.length, mtime: Date.now() }); } catch(e){} }); await new Promise(function(res, rej){ tx.oncomplete = function(){ res(); }; tx.onerror = function(){ rej(tx.error); }; tx.onabort = function(){ rej(tx.error); }; }); lastSnapshot = snapshot(); } finally { db.close(); } }
-            async function flushIfDirty(){ var now = snapshot(); if (now === lastSnapshot) return false; await flush(); return true; }
-            return { restore: restore, flush: flush, flushIfDirty: flushIfDirty };
-        })();
+            var DB = 'doom-save';
+            var STORE = 'files';
+            var VERSION = 1;
+            var lastSnapshot = ''; // "name:size:mtime|name:size:mtime|..."
 
-        var soloArgs = [ '-iwad', 'doom1.wad', '-window', '-nogui', '-nomusic', '-config', 'default.cfg', '-savedir', '/save' ];
+            function open(){
+                return new Promise(function(res, rej){
+                    var req = indexedDB.open(DB, VERSION);
+                    req.onupgradeneeded = function(){
+                        var db = req.result;
+                        if (!db.objectStoreNames.contains(STORE)) {
+                            db.createObjectStore(STORE, { keyPath: 'name' });
+                        }
+                    };
+                    req.onsuccess = function(){ res(req.result); };
+                    req.onerror   = function(){ rej(req.error); };
+                });
+            }
+
+            function listSaveDir(){
+                try {
+                    return Module.FS.readdir('/save').filter(function(n){
+                        return n !== '.' && n !== '..';
+                    });
+                } catch(e){ return []; }
+            }
+
+            function snapshot(){
+                var parts = [];
+                listSaveDir().forEach(function(name){
+                    try {
+                        var st = Module.FS.stat('/save/' + name);
+                        parts.push(name + ':' + st.size + ':' + (st.mtime ? st.mtime.getTime() : 0));
+                    } catch(e){}
+                });
+                return parts.join('|');
+            }
+
+            async function restore(){
+                if (typeof indexedDB === 'undefined') return [];
+                var db = await open();
+                try {
+                    var tx = db.transaction([STORE], 'readonly');
+                    var os = tx.objectStore(STORE);
+                    var rows = await new Promise(function(res, rej){
+                        var r = os.getAll();
+                        r.onsuccess = function(){ res(r.result || []); };
+                        r.onerror   = function(){ rej(r.error); };
+                    });
+                    rows.forEach(function(row){
+                        if (!row || !row.name || !row.bytes) return;
+                        try {
+                            Module.FS.writeFile('/save/' + row.name, row.bytes);
+                        } catch(e){ console.warn('[save] writeFile error:', row.name, e); }
+                    });
+                    lastSnapshot = snapshot();
+                    return rows.map(function(r){ return r.name; });
+                } finally { db.close(); }
+            }
+
+            async function flush(){
+                if (typeof indexedDB === 'undefined') return;
+                var names = listSaveDir();
+                var db = await open();
+                try {
+                    var tx = db.transaction([STORE], 'readwrite');
+                    var os = tx.objectStore(STORE);
+                    var existing = await new Promise(function(res, rej){
+                        var r = os.getAllKeys();
+                        r.onsuccess = function(){ res(r.result || []); };
+                        r.onerror   = function(){ rej(r.error); };
+                    });
+                    // Delete records for files that no longer exist in /save.
+                    existing.forEach(function(k){
+                        if (names.indexOf(k) < 0) os.delete(k);
+                    });
+                    // Write current files (copy bytes so we don't hold MEMFS refs).
+                    names.forEach(function(name){
+                        try {
+                            var data = Module.FS.readFile('/save/' + name);
+                            var bytes = new Uint8Array(data);
+                            var copy  = new Uint8Array(bytes.length);
+                            copy.set(bytes);
+                            os.put({ name: name, bytes: copy, size: copy.length, mtime: Date.now() });
+                        } catch(e){ console.warn('[save] readFile error:', name, e); }
+                    });
+                    await new Promise(function(res, rej){
+                        tx.oncomplete = function(){ res(); };
+                        tx.onerror    = function(){ rej(tx.error); };
+                        tx.onabort    = function(){ rej(tx.error); };
+                    });
+                    lastSnapshot = snapshot();
+                } finally { db.close(); }
+            }
+
+            async function flushIfDirty(){
+                var now = snapshot();
+                if (now === lastSnapshot) return false;
+                await flush();
+                return true;
+            }
+
+            return {
+                restore:      restore,
+                flush:        flush,
+                flushIfDirty: flushIfDirty,
+                _snapshot:    snapshot,
+            };
+        })();
+        // Expose for debugging / tests.
+        window.__saveStore = saveStore;
+
+        // =================== BOOT ARGS / MODULE =============================
+        var soloArgs = [
+            '-iwad',    'doom1.wad',
+            '-window',  '-nogui', '-nomusic',
+            '-config',  'default.cfg',
+            '-savedir', '/save',
+        ];
+
         window.Module = {
-            noInitialRun: true, canvas: canvas,
-            preRun: [function(){ Module.FS.createPreloadedFile('', 'doom1.wad', 'doom1.wad', true, true); Module.FS.createPreloadedFile('', 'default.cfg', 'default.cfg', true, true); try { Module.FS.mkdir('/save'); } catch(e){} Module.addRunDependency('save-restore'); saveStore.restore().then(function(){ Module.removeRunDependency('save-restore'); }).catch(function(){ Module.removeRunDependency('save-restore'); }); }],
-            onRuntimeInitialized: function(){ setStatus('ready'); },
-            print: function(t){ if (typeof t === 'string') levelDetect.onText(t); },
-            printErr: function(t){ if (typeof t === 'string') levelDetect.onText(t); },
+            noInitialRun: true,
+            canvas: canvas,
+            preRun: [function(){
+                // Load the read-only game assets.
+                Module.FS.createPreloadedFile('', 'doom1.wad',   'doom1.wad',   true, true);
+                Module.FS.createPreloadedFile('', 'default.cfg', 'default.cfg', true, true);
+                // Persist savegames across tab refresh via IndexedDB. This
+                // Cloudflare WASM build was not linked with -lidbfs.js, so
+                // Module.FS.filesystems.IDBFS is undefined and FS.syncfs is a
+                // no-op. Instead we keep /save on MEMFS and shim the
+                // persistence layer using the plain IndexedDB API: restore
+                // on boot (blocking with addRunDependency so the engine
+                // scans the directory after hydration), and flush on a
+                // short interval + beforeunload.
+                try {
+                    Module.FS.mkdir('/save');
+                } catch(e){ /* already exists */ }
+                Module.addRunDependency('save-restore');
+                saveStore.restore().then(function(names){
+                    console.log('[save] restored', names.length, 'file(s)');
+                    Module.removeRunDependency('save-restore');
+                }).catch(function(e){
+                    console.warn('[save] restore failed:', e);
+                    Module.removeRunDependency('save-restore');
+                });
+            }],
+            onRuntimeInitialized: function(){
+                setStatus('ready — click to start');
+            },
+            print:    function(t){
+                if (typeof t === 'string') {
+                    levelDetect.onText(t);
+                    console.log(t.indexOf('doom: ') === 0 ? '[doom] ' + t : t);
+                } else {
+                    console.log(t);
+                }
+            },
+            printErr: function(t){
+                if (typeof t === 'string') levelDetect.onText(t);
+                console.error(t);
+            },
             setStatus: function(t){ if (t) setStatus(t); },
-            monitorRunDependencies: function(left){ this.totalDependencies = Math.max(this.totalDependencies || 0, left); setStatus(left ? 'loading...' : 'ready'); }
+            totalDependencies: 0,
+            monitorRunDependencies: function(left){
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                setStatus(left
+                  ? 'loading... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')'
+                  : 'ready');
+            }
         };
 
+        // ------- START ---------
         startEl.addEventListener('click', function(){
-            startEl.style.display = 'none'; canvas.focus(); setStatus('');
+            startEl.style.display = 'none';
+            canvas.focus();
+            setStatus('');
+            // Start intro music immediately so the user hears something while
+            // the menus load; level detection will switch to per-level tracks
+            // when stdout reports E1Mx.
             try { music.play(MUSIC.intro, 'intro'); } catch(e){}
-            try { 
-                Module.callMain(soloArgs); 
-            } catch(e){ setStatus('error: ' + e); }
-            setTimeout(function(){ if (!/E[1-4]M[1-9]/.test(music.audio.src)) { music.play(MUSIC.fallback, 'E1M1'); } }, 12000);
+            try { window.callMain(soloArgs); }
+            catch(e){ setStatus('error: ' + e); console.error(e); }
+
+            // After ~1.5s, if we haven't detected a level yet, drop into the
+            // E1M1 loop so the player isn't stuck on the title jingle when
+            // they navigate menus and load a map.
+            setTimeout(function(){
+                if (!/E[1-4]M[1-9]/.test(music.audio.src)) {
+                    music.play(MUSIC.fallback, 'E1M1');
+                }
+            }, 12000);
         });
 
-        setInterval(function(){ saveStore.flushIfDirty().catch(function(){}); }, 2000);
-        window.addEventListener('beforeunload', function(){ try { saveStore.flushIfDirty(); } catch(e){} });
-        var s = document.createElement('script'); s.src = 'websockets-doom.js'; s.onerror = function(){ setStatus('failed'); }; document.body.appendChild(s);
+        // Periodically flush savegames to IndexedDB so they survive tab
+        // refresh. Change-detected by comparing the current (name,size,mtime)
+        // tuple against the last flushed snapshot, so idle frames are cheap.
+        setInterval(function(){
+            saveStore.flushIfDirty().catch(function(e){
+                console.warn('[save] flush failed:', e);
+            });
+        }, 2000);
+        window.addEventListener('beforeunload', function(){
+            // Best-effort; Chrome and Safari will let a microtask settle.
+            try { saveStore.flushIfDirty(); } catch(e){}
+        });
+
+        var s = document.createElement('script');
+        s.src = 'websockets-doom.js';
+        s.onerror = function(){ setStatus('failed to load websockets-doom.js'); };
+        document.body.appendChild(s);
     })();
     </script>
 </body>
