@@ -60,7 +60,8 @@
             script.src = "https://cdn.jsdelivr.net/gh/lazarv/wasm-doom@master/docs/doom.js";
             document.body.appendChild(script);
         } catch (e) {
-            Module.setStatus("Error: Can't fetch "doom.wasm"");
+            
+            Module.setStatus("Error: Can't fetch doom.wasm");
         }
     }
 
