@@ -8,28 +8,24 @@ var Module = {
         if (status) status.innerHTML = text;
     },
     monitorRunDependencies: function(left) {
+        
         this.setStatus(left ? "Trying run... (" + left + ")" : "Constructed doom.js");
+    },
+    
+    instantiateWasm: function(imports, successCallback) {
+        fetch('doom.wasm').then(response => {
+            return response.arrayBuffer();
+        }).then(binary => {
+            return WebAssembly.instantiate(binary, imports);
+        }).then(result => {
+            successCallback(result.instance);
+        });
+        return {}; 
     }
 };
 
 
-async function startDoom() {
-    try {
-        const response = await fetch('doom.wasm');
-        if (!response.ok) throw new Error("Can't fetch doom.wasm");
-        const binary = await response.arrayBuffer();
-        Module.wasmBinary = binary;
-
-        
-        var script = document.createElement('script');
-        script.src = "https://cdn.jsdelivr.net/gh/kripken/emscripten/master/src/shell.js"; 
-        script.onload = () => {
-            console.log("Engine Handshake Complete");
-        };
-        document.body.appendChild(script);
-    } catch (e) {
-        Module.setStatus("FATAL: " + e.message);
-    }
-}
-
-startDoom();
+(function() {
+    console.log("Payload logic active.");
+    // This is where the WASM core usually starts itself
+})();
