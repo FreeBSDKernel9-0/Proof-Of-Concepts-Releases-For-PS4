@@ -29,18 +29,15 @@
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
         alert("Hey, welcome to WebKit Doom v2.01! This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. -Shadowdev-Vita.");
     </script>
-
     <div id="wrap">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>
     <div id="status">Loading...</div>
     <div id="musicbar"></div>
     <div id="start"><div class="btn">Click to start WebKit Doom v2.01</div></div>
-    
     <div id="melt">
         <div class="banner">GAME OVER</div>
     </div>
-
     <script>
     var Module = {
         canvas: document.getElementById('canvas'),
@@ -49,7 +46,6 @@
             document.getElementById('status').textContent = t; 
         }
     };
-
     async function prepareEngine() {
         try {
             const response = await fetch('doom.wasm');
@@ -57,11 +53,10 @@
             Module.wasmBinary = buffer;
 
             const script = document.createElement('script');
-            script.src = "https://cdn.jsdelivr.net/gh/lazarv/wasm-doom@master/docs/doom.js";
+            script.src = "https://kripken.github.io/emscripten-site/examples/doom/doom.js";
             document.body.appendChild(script);
         } catch (e) {
-            
-            Module.setStatus("Error: Can't fetch doom.wasm");
+            Module.setStatus("Error: Can't find doom.js");
         }
     }
 
