@@ -8,29 +8,19 @@
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #bbb; font-family: monospace; overflow: hidden; }
         #wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-        #canvas { image-rendering: -webkit-optimize-contrast; image-rendering: pixelated; max-width: 100vw; max-height: 100vh; background: #000; outline: none; }
+        #canvas { image-rendering: pixelated; max-width: 100vw; max-height: 100vh; background: #000; outline: none; }
         #status { position: absolute; top: 8px; left: 8px; font-size: 12px; opacity: 0.7; z-index: 10; pointer-events: none; }
         #musicbar { position: absolute; bottom: 8px; right: 8px; font-size: 11px; opacity: 0.6; z-index: 10; pointer-events: none; color: #c33; letter-spacing: 1px; }
         #start { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 20; cursor: pointer; }
         #start .btn { border: 2px solid #c33; color: #fff; padding: 16px 28px; font: bold 18px monospace; letter-spacing: 2px; background: #300; }
-        #start .btn:hover { background: #500; }
-        #melt { position: absolute; inset: 0; z-index: 30; pointer-events: none; display: none; overflow: hidden; background: #000; }
+        #melt { position: absolute; inset: 0; z-index: 30; pointer-events: none; display: none; background: #000; }
         #melt.on { display: block; pointer-events: auto; }
-        #meltCanvas { position: absolute; left: 0; top: 0; image-rendering: -webkit-optimize-contrast; image-rendering: pixelated; }
-        #melt .banner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 900 80px/1 'Courier New', monospace; color: #e55; letter-spacing: 8px; text-shadow: 0 0 12px #900, 0 0 32px #400; opacity: 0; transform: scale(0.85) rotate(-1deg); }
+        #melt .banner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 900 80px/1 'Courier New', monospace; color: #e55; opacity: 0; }
         #melt.on .banner { animation: banner 4.5s ease-out 1.6s forwards; }
-        @keyframes banner {
-            0%    { opacity: 0;   transform: scale(0.85) rotate(-1deg); filter: blur(10px) hue-rotate(0deg); }
-            30%   { opacity: 1;   transform: scale(1.04) rotate(0.8deg);filter: blur(0px)  hue-rotate(-6deg); }
-            60%   { opacity: 1;   transform: scale(1.00) rotate(0deg);  filter: blur(0px)  hue-rotate(0deg); }
-            100%  { opacity: 0.95;transform: scale(1.00) rotate(0deg);  filter: blur(0px)  hue-rotate(0deg); }
-        }
-        #melt .sub { position: absolute; inset: auto 0 18% 0; text-align: center; font: 12px monospace; color: #a22; letter-spacing: 4px; opacity: 0; }
-        #melt.on .sub { animation: sub 3s ease-in 2.6s forwards; }
-        @keyframes sub { 0%{opacity:0} 100%{opacity:.9} }
+        @keyframes banner { 0% { opacity: 0; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body class="noselect">
+<body>
     <script>
         alert("Awaiting Payload... (doom.bin v2.01)");
         alert("Got response! (doom.bin v2.01)");
@@ -39,106 +29,50 @@
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
         alert("Hey, welcome to WebKit Doom v2.01! This is a version of my proof-of-concept for the JS-Strings-With-WebKit vulnerability. -Shadowdev-Vita.");
     </script>
+
     <div id="wrap">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>
-    <div id="status">loading...</div>
+    <div id="status">Loading...</div>
     <div id="musicbar"></div>
-    <div id="start"><div class="btn">CLICK TO START DOOM</div></div>
+    <div id="start"><div class="btn">Click to start WebKit Doom v2.01</div></div>
+    
     <div id="melt">
-        <canvas id="meltCanvas"></canvas>
         <div class="banner">GAME OVER</div>
-        <div class="sub">press R to try again &middot; press M to mute music</div>
     </div>
+
     <script>
     var Module = {
         canvas: document.getElementById('canvas'),
+        noInitialRun: true,
         setStatus: function(t) { document.getElementById('status').textContent = t; }
     };
 
-    document.getElementById('start').addEventListener('click', function() {
-        this.style.display = 'none';
-        if (typeof Module.callMain === 'function') {
-            Module.callMain([]);
-        } else {
-            alert("Engine still loading...");
-            this.style.display = 'flex';
+    async function prepareEngine() {
+        try {
+            const response = await fetch('doom.wasm');
+            const buffer = await response.arrayBuffer();
+            Module.wasmBinary = buffer;
+
+            const script = document.createElement('script');
+            script.src = "https://cdn.jsdelivr.net/gh/lazarv/wasm-doom@master/docs/doom.js";
+            document.body.appendChild(script);
+        } catch (e) {
+            Module.setStatus("Error: Can't fetch "doom.wasm"");
         }
-    });
-
-    var canRestart = true;
-    var REMAP_CLICK = { 'Backspace': true };
-    var REMAP_KEY = { 'KeyF': { code: 'KeyE', key: 'e', keyCode: 69 } };
-    var REMAP_KEYCODE = { 70: 69 };
-    var PAD_MAP = {
-        buttons: {
-            7:  { fire: true },
-            0:  { key: { code:'KeyE', key:'e', keyCode:69 } },
-            2:  { key: { code:'KeyE', key:'e', keyCode:69 } },
-            5:  { fire: true },
-            6:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },
-            4:  { key: { code:'ShiftLeft', key:'Shift', keyCode:16 } },
-            12: { key: { code:'KeyW', key:'w', keyCode:87 } },
-            13: { key: { code:'KeyS', key:'s', keyCode:83 } },
-            14: { key: { code:'KeyO', key:'o', keyCode:79 } },
-            15: { key: { code:'KeyP', key:'p', keyCode:80 } },
-            9:  { key: { code:'Escape', key:'Escape', keyCode:27 } },
-            1:  { key: { code:'Escape', key:'Escape', keyCode:27 } },
-        },
-        axes: {
-            0: { pos: 'KeyD', neg: 'KeyA', deadzone: 0.30 },
-            1: { pos: 'KeyS', neg: 'KeyW', deadzone: 0.30 },
-            2: { pos: 'KeyP', neg: 'KeyO', deadzone: 0.45 },
-        },
-    };
-    var MUSIC = {
-        intro:  'music/D_INTRO.ogg',
-        levels: {
-            'E1M1': 'music/D_E1M1.ogg',
-            'E1M2': 'music/D_E1M2.ogg',
-            'E1M3': 'music/D_E1M3.ogg',
-            'E1M4': 'music/D_E1M4.ogg',
-            'E1M5': 'music/D_E1M5.ogg',
-            'E1M6': 'music/D_E1M6.ogg',
-            'E1M7': 'music/D_E1M7.ogg',
-            'E1M8': 'music/D_E1M8.ogg',
-            'E1M9': 'music/D_E1M9.ogg',
-        },
-        inter:  'music/D_INTER.ogg',
-        victor: 'music/D_VICTOR.ogg',
-        fallback: 'music/D_E1M1.ogg',
-        volume: 0.45,
-    };
-
-    function triggerGameOver() {
-        const melt = document.getElementById('melt');
-        melt.classList.add('on');
-        canRestart = false;
-        setTimeout(() => { canRestart = true; }, 10000);
     }
 
-    window.addEventListener('keydown', (e) => {
-        if (document.getElementById('melt').classList.contains('on')) {
-            if (e.code === 'KeyR' && canRestart) {
-                location.reload();
-            }
+    document.getElementById('start').addEventListener('click', function() {
+        if (typeof Module.callMain === 'function') {
+            this.style.display = 'none';
+            Module.callMain([]);
+        } else {
+            alert("STARTING MACHINE...");
         }
     });
+
+    prepareEngine();
     </script>
-    <script src="doom.js"></script>
 </body>
-</html>```
-
-
-
-
-
-
-
-
-
-
-
-
-
+</html>
 
