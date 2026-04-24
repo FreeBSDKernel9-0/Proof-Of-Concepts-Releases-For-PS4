@@ -51,6 +51,21 @@
         <div class="sub">press R to try again &middot; press M to mute music</div>
     </div>
     <script>
+    var Module = {
+        canvas: document.getElementById('canvas'),
+        setStatus: function(t) { document.getElementById('status').textContent = t; }
+    };
+
+    document.getElementById('start').addEventListener('click', function() {
+        this.style.display = 'none';
+        if (typeof Module.callMain === 'function') {
+            Module.callMain([]);
+        } else {
+            alert("Engine still loading...");
+            this.style.display = 'flex';
+        }
+    });
+
     var canRestart = true;
     var REMAP_CLICK = { 'Backspace': true };
     var REMAP_KEY = { 'KeyF': { code: 'KeyE', key: 'e', keyCode: 69 } };
@@ -109,26 +124,10 @@
             }
         }
     });
-
-    var Module = {
-        canvas: document.getElementById('canvas'),
-        setStatus: function(t) { document.getElementById('status').textContent = t; },
-        onRuntimeInitialized: function() {
-            document.getElementById('start').addEventListener('click', function() {
-                this.style.display = 'none';
-                if (typeof Module.callMain === 'function') {
-                    Module.callMain([]);
-                }
-            });
-        }
-    };
     </script>
     <script src="doom.js"></script>
 </body>
-</html>
-
-
-
+</html>```
 
 
 
