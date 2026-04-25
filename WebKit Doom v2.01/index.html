@@ -59,9 +59,10 @@
         }
     }
     document.getElementById('start').onclick = function() {
-        if (Module.callMain) {
+        var runDoom = Module.callMain || Module._main;
+        if (runDoom) {
             this.style.display = 'none';
-            Module.callMain([]);
+            runDoom([]);
         } else {
             alert("STARTING MACHINE...");
         }
