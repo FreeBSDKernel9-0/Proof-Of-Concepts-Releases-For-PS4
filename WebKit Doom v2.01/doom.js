@@ -1,4 +1,4 @@
-var Module = {
+var Module = Object.assign(Module || {}, {
     canvas: document.getElementById('canvas'),
     arguments: [],
     print: function(text) { console.log(text); },
