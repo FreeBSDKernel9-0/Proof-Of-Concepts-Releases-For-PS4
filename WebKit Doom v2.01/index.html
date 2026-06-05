@@ -29,6 +29,7 @@
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
         alert("Hey, welcome to WebKit Doom v2.01!\n\nThis is a proof-of-concept for my JS-Strings-With-WebKit vulnerability in WebKit and Google.\n\nDeveloped by: Shadowdev-Vita.\nDiscovered on: 06/03/2026.");
     </script>
+
     <div id="wrap">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>
@@ -38,16 +39,7 @@
     <div id="melt">
         <div class="banner">GAME OVER</div>
     </div>
-    <script>
-    var Module = {
-        canvas: document.getElementById('canvas'),
-        noInitialRun: true,
-        setStatus: function(t) { 
-            document.getElementById('status').textContent = t; 
-        }
-    };
 
-    // Start fix here
     <script>
     var Module = {
         canvas: document.getElementById('canvas'),
@@ -103,8 +95,6 @@
     };
 
     prepareEngine();
-    </script>
-// End fix here
     </script>
 </body>
 </html>
