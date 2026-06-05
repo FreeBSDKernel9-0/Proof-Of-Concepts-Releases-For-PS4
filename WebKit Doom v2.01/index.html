@@ -48,6 +48,24 @@
     };
 
     // Start fix here
+    <script>
+    var Module = {
+        canvas: document.getElementById('canvas'),
+        noInitialRun: true,
+        setStatus: function(t) { 
+            document.getElementById('status').textContent = t; 
+        }
+    };
+
+    var startClicked = false;
+
+    function tryRunningDoom() {
+        var runDoom = Module.callMain || Module._main;
+        if (runDoom && startClicked) {
+            runDoom([]);
+        }
+    }
+
     async function prepareEngine() {
         try {
             const response = await fetch('doom.wasm');
@@ -60,17 +78,11 @@
             script.onload = function() {
                 Module.monitorRunDependencies = function(left) {
                     if (left === 0) {
-                        var runDoom = Module.callMain || Module._main;
-                        if (runDoom && document.getElementById('start').style.display === 'none') {
-                            runDoom([]);
-                        }
+                        tryRunningDoom();
                     }
                 };
                 
-                var runDoom = Module.callMain || Module._main;
-                if (runDoom && document.getElementById('start').style.display === 'none') {
-                    runDoom([]);
-                }
+                tryRunningDoom();
             };
             document.body.appendChild(script);
         } catch (e) {
@@ -80,6 +92,8 @@
 
     document.getElementById('start').onclick = function() {
         this.style.display = 'none';
+        startClicked = true;
+        
         var runDoom = Module.callMain || Module._main;
         if (runDoom) {
             runDoom([]);
@@ -89,6 +103,7 @@
     };
 
     prepareEngine();
+    </script>
 // End fix here
     </script>
 </body>
