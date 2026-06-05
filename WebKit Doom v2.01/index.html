@@ -1,9 +1,3 @@
-// Copyright (C) March-June 2026 Shadowdev-Vita.
-
-// This software is entirely open source, and may be modified at any time, as long as you credit the creator (me for bug fixes, Cloudflare for the game and assets.)
-// Mods coming soon.
-// Open source is king.
-
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
@@ -33,7 +27,7 @@
         alert("waiting for clients");
         alert("launching payload");
         alert("GoldHEN v1.1 loaded! Coded by SiSTRo");
-        alert("Hey, welcome to WebKit Doom v2.01!\n\n This is a proof-of-concept for my JS-Strings-With-WebKit vulnerability in WebKit and Google. \n\nDeveloped by: Shadowdev-Vita. \nDiscovered on: 06/03/2026.-Shadowdev-Vita.");
+        alert("Hey, welcome to WebKit Doom v2.01!\n\nThis is a proof-of-concept for my JS-Strings-With-WebKit vulnerability in WebKit and Google.\n\nDeveloped by: Shadowdev-Vita.\nDiscovered on: 06/03/2026.");
     </script>
     <div id="wrap">
         <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
@@ -52,28 +46,50 @@
             document.getElementById('status').textContent = t; 
         }
     };
+
+    // Start fix here
     async function prepareEngine() {
         try {
             const response = await fetch('doom.wasm');
+            if (!response.ok) throw new Error("Network response was not ok");
             const buffer = await response.arrayBuffer();
             Module.wasmBinary = buffer;
+            
             const script = document.createElement('script');
             script.src = "doom.js";
+            script.onload = function() {
+                Module.monitorRunDependencies = function(left) {
+                    if (left === 0) {
+                        var runDoom = Module.callMain || Module._main;
+                        if (runDoom && document.getElementById('start').style.display === 'none') {
+                            runDoom([]);
+                        }
+                    }
+                };
+                
+                var runDoom = Module.callMain || Module._main;
+                if (runDoom && document.getElementById('start').style.display === 'none') {
+                    runDoom([]);
+                }
+            };
             document.body.appendChild(script);
         } catch (e) {
-            Module.setStatus("Error");
+            Module.setStatus("Error: " + e.message);
         }
     }
+
     document.getElementById('start').onclick = function() {
+        this.style.display = 'none';
         var runDoom = Module.callMain || Module._main;
         if (runDoom) {
-            this.style.display = 'none';
             runDoom([]);
         } else {
-            alert("STARTING MACHINE...");
+            Module.setStatus("Starting...");
         }
     };
+
     prepareEngine();
+// End fix here
     </script>
 </body>
 </html>
