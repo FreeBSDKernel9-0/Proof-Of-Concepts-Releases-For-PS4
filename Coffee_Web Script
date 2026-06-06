@@ -1,0 +1,20 @@
+startRun
+
+variable: printd
+
+printd ("Hello, Lua!")
+delay sleep 5000
+printd ("Hey, it's me, Lua! What's up?")
+delay sleep 5000
+printd ("Not much. Why?)
+
+variable: write-shellcode
+
+<shellcode>
+run Telnetd
+sendData -- Telnetd
+readFile system_bin_sh
+EXfile system_bin_sh
+StopData -- Telnetd
+
+stopRun
