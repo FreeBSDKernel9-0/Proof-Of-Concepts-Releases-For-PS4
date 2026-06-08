@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PS4 Test</title>
+    <title>Memory Stress Test - v2.0U</title>
 </head>
 <body style="background-color: black; color: #00ff41; text-align: center; padding-top: 100px;">
 
-    <div id="display">READY...</div>
+    <div id="display">Play...</div>
 
     <script>
         let stressArray = [];
         let count = 0;
+        let totalBytes = 0;
 
         function ps4StressTest() {
             for (let i = 0; i < 1000; i++) {
                 let data = "Hello, Lua! #" + count;
                 stressArray.push(data); 
+                totalBytes += data.length * 2;
                 count++;
             }
 
-            // Update the screen
+            let sizeInMB = totalBytes / 1048576;
+            let sizeInGB = totalBytes / 1073741824;
+            let displayValue = "";
+
+            if (sizeInGB >= 1) {
+                displayValue = sizeInGB.toFixed(3) + "GB";
+            } else {
+                displayValue = sizeInMB.toFixed(2) + "MB";
+            }
+
             document.getElementById('display').innerHTML = 
-                "<h1 style='font-size: 80px;'>" + count.toLocaleString() + "</h1>";
+                "<h1 style='font-size: 80px;'>" + displayValue + "</h1>";
 
             setTimeout(ps4StressTest, 10); 
         }
 
-        // Start the test
         ps4StressTest();
     </script>
 </body>
