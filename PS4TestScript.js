@@ -1,0 +1,19 @@
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function runAlerts() {
+    alert("Scripts on PS4? Hmmm... homebrew potential, perhaps?");
+    await sleep(5000);
+    
+    alert("Also, can we mention how Sony hasn't patched the ability to run untrusted scripts, even if they're from external places?");
+    await sleep(5000);
+    
+    alert("Also, executing code from a sever on a PC should've been the first thing they patched.");
+    await sleep(5000);
+    
+    alert("Some lessons for you, Sony.");
+    await sleep(5000);
+    
+    alert("Later, Sony!\n -Shadowdev-Vita.");
+}
+
+runAlerts();
