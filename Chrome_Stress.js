@@ -1,4 +1,13 @@
-const TARGET_LIMIT_GB = 0.0; 
+// Made by Shadowdev-Vita
+// Copyright June 2026
+// Again, if you're running this, it's best to inject into DevTools.
+
+// This is completely open source. 
+
+// If you want the redirect, copy my setup (with the NULL value in TARGET_LIMIT)
+// but if you're pen-testing, change this line to the value you want: const TARGET_LIMIT_GB = 0.0;
+
+const TARGET_LIMIT_GB = 0.0;
 const TARGET_LIMIT_BYTES = TARGET_LIMIT_GB * 1024 * 1024 * 1024; 
 const TARGET_LIMIT_MB = TARGET_LIMIT_GB * 1024;                
 
