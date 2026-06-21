@@ -95,9 +95,12 @@ Finally got my HackerOne up - so I can make reports now.
 Made a memory stress test script in JS, and tested it on Chrome 149.0.0.0, with weird results:
 
 First "Aw, Snap!" crash: 4.83 GB.
+
 Second crash: 4.929 GB.
-Third crash: 5.50 GB.
-Fourth crash: 4.600-smething GB.
+
+Third crash: 5.50 GB
+.
+Fourth crash: 4.600-something GB.
 
 And good news! It's up right now, completely open source, so you can try it. (Pure JS, by the way, best for injecting into tabs using DevTools.)
 
