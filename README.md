@@ -107,6 +107,7 @@ And good news! It's up right now, completely open source, so you can try it. (Pu
 Anyway, later!
 FreeBSDKernel9-0.
 
+(If you want to run this, again, it's best to inject into DevTools.)
 Also, I made some dumb prank 'virus' with a mate, called CAT_EXE.js, where it:
 
 Spawns a bunch of cats in Windows XP style boxes.
@@ -119,5 +120,5 @@ Red flashes at a random 3-6 second interval, with Windows XP 'scream' error audi
 
 WARNING!: THIS MIGHT MAKE YOUR BROWSER SLOW DOWN.
 
-Anyway, it's up now, and open source!
+
 FreeBSDKernel9-0.
