@@ -80,3 +80,29 @@ If WebKit doesn't hold up - the FOUND IT! text will appear, and you'll get a sci
 
 Hope it doesn't hold up,
 FreeBSDKernel9-0.
+
+So, hey guys. Sorry I haven't updated this in ages. Here's the goss:
+
+#Had to scrap WebKit Doom v2.01 due to performance issues, and that wasn't even on WebKit. I was testing on my computer.
+
+#Made some updates to old stuff, put my open source Puffy Cat fork back up (getting help with it from a mate.)
+
+#My TV started acting up, so the whole 'hack a Fire Stick Lite' thingis dead in the water. But I'm gonna buy a thing that runs Linux (A RetroArch skin, 
+with U-Boot) and just install AOSP's MirBSD Korn Shell (MKSH) on it, because it'd be funny.
+
+#Finally got my HackerOne up - so I can make reports now.
+
+#Made a memory stress test script in JS, and tested it on Chrome 149.0.0.0, with weird results:
+
+#First "Aw, Snap!" crash: 4.83 GB.
+#Second crash: 4.929 GB.
+#Third crash: 5.50 GB.
+#Fourth crash: 4.600-smething GB.
+
+Anyway, later!
+FreeBSDKernel9-0.
+
+
+
+
+#####
