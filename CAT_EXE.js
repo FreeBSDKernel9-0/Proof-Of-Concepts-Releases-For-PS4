@@ -1,3 +1,7 @@
+// Made by Shadowdev-Vita
+// Copyright June 2026
+// This is completely open source, you can modify this any way you want.
+
 (() => {
     alert("Running exploit...");
     alert("Your search history just got exposed! (:");
