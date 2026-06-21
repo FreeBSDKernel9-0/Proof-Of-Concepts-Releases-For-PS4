@@ -106,3 +106,18 @@ And good news! It's up right now, completely open source, so you can try it. (Pu
 
 Anyway, later!
 FreeBSDKernel9-0.
+
+Also, I made some dumb prank 'virus' with a mate, called CAT_EXE.js, where it:
+
+Spawns a bunch of cats in Windows XP style boxes.
+
+If you clear one box, another appears, like those old viruses from Windows XP/Vista.
+
+Red flashes at a random 3-6 second interval, with Windows XP 'scream' error audio.
+
+(You can just close the tab if you want the script to stop running.)
+
+WARNING!: THIS MIGHT MAKE YOUR BROWSER SLOW DOWN.
+
+Anyway, it's up now, and open source!
+FreeBSDKernel9-0.
