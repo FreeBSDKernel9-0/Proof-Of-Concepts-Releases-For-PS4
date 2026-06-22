@@ -67,6 +67,6 @@ function runStressTest() {
     }
 }
 
-// Start the loop safely
+
 console.log("The stress test begins now!");
 runStressTest();
