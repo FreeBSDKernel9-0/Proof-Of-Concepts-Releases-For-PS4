@@ -1,3 +1,7 @@
+// Made by Shadowdev-Vita
+// Copyright July 2026
+// All code is open source, you may modify how you wish
+
 (function() {
     const txt = "AI responses may include mistakes. Learn more";
     let i = 0;
