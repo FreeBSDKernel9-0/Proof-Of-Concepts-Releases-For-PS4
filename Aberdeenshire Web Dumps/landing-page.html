@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/splash_template.css" rel="stylesheet">
+  
+  <title>Login to WiFi</title>
+</head>
+          
+    
+                            <body style='background:#FFFFFFFF none no-repeat center center scroll;' data-sj=''>
+    <!-- splash content -->
+    <!-- landing page content -->
+                                                                                                  <div class="container" id="landing" data-body-style="background:#FFFFFFFF none no-repeat center center scroll;" >
+                              <div class="section rowBlock" style="min-height: 80px; background: rgb(0, 66, 137); float: left;">
+                            
+                  
+        <div class="col_one ">
+                                  <div class="sw_height " style="height:80px;white-space: nowrap;text-align: center;">
+                    <span class="img_ver_main" style="vertical-align:middle"></span>
+                            <img class="img_ver_btm sw_height" src='media/white-logo.png' style='vertical-align:middle;text-align:center;height:66px;width:300px;'/>
+          </div>
+                    </div>
+        </div>
+ 
+                                  <div class="section rowBlock" style="min-height: 350px; background: transparent; float: left;">
+                            
+                  
+        <div class="col_one ">
+                                  <div class="sw_height " style="min-height:350px;">
+            <div style="font-size: 13px;"><font face="arial" style="" size="5"><br></font></div><font face="arial" style="" size="5">Welcome to Aberdeenshire Council's Public Wi-Fi Service</font><div style="font-size: 13px;"><font face="arial"><br></font></div><div style="font-size: 13px;"><font face="arial"><br></font></div><div style=""><font face="arial" style=""><font style="" size="3">If you choose to continue, you are agreeing to comply with and be bound by the following terms and conditions of use. If you disagree with any part of these terms and conditions, you may not continue.<br><br><br>Terms of use:</font></font></div><div style="font-size: 13px;"><font face="arial" style=""><br></font><span style="font-size: 13px; font-family: arial;">1. Your use of any information or materials on sites you access is entirely at your own risk, for which we shall not be liable.</span><span style="font-size: 13px;"><font face="arial" style=""></font><font face="arial" style=""></font></span></div><div style="font-size: 13px;"><font face="arial" style=""><span style="font-size: 13px;"><br>2. You agree that, though this portal, you will not perform any of the following acts: </span><br><ul><li><font face="arial" style=""><span style="font-size: 13px;">Attempt to access devices or resources to which you have no explicit, legitimate rights.</span></font></li><li>Copy, reproduce, or transmit any copyrighted files or information other than in accordance with the requirements and allowances of the copyright holder.</li><li>Launch network attacks of any kind including port scans, DoS/DDoS, packet floods, replays or injections, session hijacking or interception, or other such activity with malicious intent.</li><li>Transmit malicious software such as viruses, Trojan horses, and worms.</li><li>Surreptitiously install software or make configuration changes to any device or application, by means of the installation or execution of key loggers, registry keys,&nbsp; or other executable or active application or script</li></ul><span style="font-size: 13px;">3. You agree that you will use the access provided here responsibly and with full regard to the safety, security, and privacy of all other users, devices, and resources. </span><br><br><span style="font-size: 13px;">4. You agree that you will be mindful of the cultural sensitivities of others while using this portal so as not to provoke reaction or offense, and that you will not intentionally access pornographic, graphically violent, hateful, or other offensive material (as deemed by us) regardless of others' sensitivities. </span><br><br><span style="font-size: 13px;">5. You understand that we reserve the right to log or monitor traffic to ensure that these terms are being followed. </span><br><br><span style="font-size: 13px;">6. You understand that unauthorized use of resources through this portal may give rise to a claim for damages and/or be a criminal offense.​</span></font></div>
+          </div>
+                    </div>
+        </div>
+ 
+                                  <div class="section rowBlock" style="min-height: 40px; background: transparent; float: left;">
+                            
+                  
+        <div class="col_one ">
+                                  <div class='form_main'>
+            <div class="form-group">
+              <div class='formError form_right' style='display:none;'></div>
+            </div>
+          </div>
+          <div class="sw_height " style="height:40px;white-space: nowrap;text-align: center">
+                      <span class='img_ver_main' style='vertical-align:middle'></span>
+          <a class='btn ancButton' style='color:#ffffff;background:#004289;vertical-align:middle;text-align:center;font-size:20px ;border-radius:4px;padding:6px 12px;' href='#'> ACCEPT & CONNECT </a>          </div>
+                    </div>
+        </div>
+ 
+                                      </div>
+                                            <!-- landing page content end -->
+      <script src= "js/jquery.min.js"></script>
+  <script src= "js/bootstrap.bundle.min.js"></script>
+  <script src= "js/eg.min.js"></script>
+    <script type='text/javascript'>
+  
+    $(function(){
+      $('input[name=f_emailcheck], input[name=f_mobilecheck]').change(function(){
+        var form = $(this).parents('form'),
+          em_ck  = form.find('input[name=f_emailcheck]'),
+          mob_ck = form.find('input[name=f_mobilecheck]'),
+          em_rs  = form.find('label.email span.redstar'),
+          mob_rs = form.find('label.mobile span.redstar'),
+          email  = form.find('input[name=f_email]'),
+          mobile = form.find('input[name=f_mobile]');
+        if(!em_ck.is(":checked")&&!mob_ck.is(":checked")){
+          if ($(this).prop('name')=='f_emailcheck') mob_ck.prop('checked', true);
+          else em_ck.prop('checked', true);
+        }
+        if (em_ck.is(":checked")) { em_rs.text("*"); email.prop("required"); }
+        else { em_rs.text(""); email.removeProp("required"); }
+        if (mob_ck.is(":checked")) { mob_rs.text("*"); mobile.prop("required"); }
+        else { mob_rs.text(""); mobile.removeProp("required"); }
+      });
+    });
+        $('.regButton').on('click', function(event) {
+      event.preventDefault();
+      var lan = $('#landing'), log = $('#login');
+      if (log) { log.hide(); }
+      if (lan) { $('body').attr('style', lan.attr('data-body-style')); lan.show();}
+    });
+    $('.logButton').on('click', function(event) {
+      event.preventDefault();
+      var lan = $('#landing'), log = $('#login');
+      if (lan) { lan.hide(); }
+      if (log) { $('body').attr('style', log.attr('data-body-style')); log.show();}
+    });
+    $('.sponsorLogin').on('click', function(event) {
+      event.preventDefault();
+      $('#employee-registration').hide();
+      $('#vendor-registration').hide();
+      $('#guest-registration').hide();
+      $('#login').show();
+    });
+    $('.sponsor-emp').on('click', function(event) {
+      event.preventDefault();
+      $('#login').hide();
+      $('#vendor-registration').hide();
+      $('#guest-registration').hide();
+      $('#employee-registration').show();
+    });
+    $('.sponsor-vnd').on('click', function(event) {
+      event.preventDefault();
+      $('#login').hide();
+      $('#employee-registration').hide();
+      $('#guest-registration').hide();
+      $('#vendor-registration').show();
+    });
+    $('.sponsor-gst').on('click', function(event) {
+      event.preventDefault();
+      $('#login').hide();
+      $('#employee-registration').hide();
+      $('#vendor-registration').hide();
+      $('#guest-registration').show();
+    });
+            $('.tryButton').on('click', function(event) {
+      event.preventDefault();
+      // This logic wont work for HiveAP as clientMAC will not be present in failure page redirection
+      // location.replace(location.href.replace('landing.html', 'landing.html')); 
+      location.href = "http://1.2.3.4"; // Force AP's Captive portal redirection to kick in
+    });
+    $('.outButton').on('click', function(event) {
+      event.preventDefault();
+      location.replace(getLogoutURL());
+    });
+    $('.ancButton').on('click', function(event) {
+      event.preventDefault();
+      var form = $('<form method="POST"></form>'), urlParams = URLSearchToFormFields();
+      form.prepend(urlParams.formItems);
+      form.append(urlParams.hsServer); form.append(urlParams.currTime); form.append(urlParams.qv);
+      form.append('<input name="f_register" type="hidden" value="Register">');
+      var formAction = getFormAction('reg');
+      form.attr('action', location.origin+ '/guest/register/accept_connect' + location.search);
+      form.attr('method', formAction.method);
+      if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize()
+      }).done(function (data) {
+        $('.formError, .formSubmitStatus').text(data.message).show();
+        if(data.macAuthRedirect) {
+          setTimeout(function(){
+          var macAuthForm = $('<form></form>');
+            $(document.body).append(macAuthForm);
+            var clientMac = $.urlParam('clientMac').replace(/-/g, '').toLowerCase();
+            macAuthForm.append(URLSearchToFormFields())
+            macAuthForm.append('<input type="hidden" name="username" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="password" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="Submit2" value="Submit">');
+            macAuthForm.append('<input type="hidden" name="autherr" value="0">');
+            macAuthForm.append('<input type="hidden" name="url" value="https://extremenetworks.com">');
+            macAuthForm.append('<input type="hidden" name="ssid" value="' + $.urlParam('network') + '">');
+            macAuthForm.attr('action', $.urlParam('redirecturl'));
+            macAuthForm.attr('method', 'POST');
+            macAuthForm.submit();
+          }, 500);          
+        }
+      }).fail(function (data) {
+        $('.formError, .formSubmitStatus').text('Server Error. Please try after sometime').show();
+      });
+    });
+    $('.cntButton').on('click', function(event) {
+      event.preventDefault();
+      var form = $('<form method="POST"></form>'), urlParams = URLSearchToFormFields();
+      form.prepend(urlParams.formItems);
+      $('<input name="f_agree">').val('acknowledgement').appendTo(form);
+      form.append(urlParams.hsServer); form.append(urlParams.currTime); form.append(urlParams.qv);
+      var formAction = getFormAction('log');
+      form.attr('action', location.origin+ '/guest/register/accept_connect' + location.search);
+      form.attr('method', formAction.method);
+      if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize()
+      }).done(function (data) {
+        $('.formError, .formSubmitStatus').text(data.message).show();
+        if(data.macAuthRedirect) {
+          setTimeout(function(){
+          var macAuthForm = $('<form></form>');
+            $(document.body).append(macAuthForm);
+            var clientMac = $.urlParam('clientMac').replace(/-/g, '').toLowerCase();
+            macAuthForm.append(URLSearchToFormFields())
+            macAuthForm.append('<input type="hidden" name="username" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="password" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="Submit2" value="Submit">');
+            macAuthForm.append('<input type="hidden" name="autherr" value="0">');
+            macAuthForm.append('<input type="hidden" name="url" value="https://extremenetworks.com">');
+            macAuthForm.append('<input type="hidden" name="ssid" value="' + $.urlParam('network') + '">');
+            macAuthForm.attr('action', $.urlParam('redirecturl'));
+            macAuthForm.attr('method', 'POST');
+            macAuthForm.submit();
+          }, 500);          
+        }
+      }).fail(function (data) {
+        $('.formError, .formSubmitStatus').text('Server Error. Please try after sometime').show();
+      });
+    });
+    $.urlParam = function (name) {
+      var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (results == null) {
+        return null;
+      }
+      else {
+        return decodeURI(results[1]) || 0;
+      }
+    }
+    $('form.registrationForm a.submit').on('click', function(event) {
+      event.preventDefault();
+      if (!isRegFormValid($(this).parents('form'))) return false;
+      var path = location.pathname.split('/'), form = $(this).parents('form'), urlParams = URLSearchToFormFields();
+      if (form.find('.select_dob_day').val()) {
+        var day = form.find('.select_dob_day').val(), month = form.find('.select_dob_month').val(), year = form.find('.select_dob_year').val();
+        $('form.registrationForm input[name=f_dob]').remove()
+        form.append('<input name="f_dob" type="hidden" value="'+year+'-'+month+'-'+day+'">');
+      }
+      if (form.find('.select_mobile_number').val()) {
+        var code = form.find('.select_country_code').val(), number = form.find('.select_mobile_number').val();
+        $('form.registrationForm input[name=f_mobile]').remove()
+        form.append('<input name="f_mobile" type="hidden" value="' + code + number + '">');
+      }
+      $('form.registrationForm input[name=cpname]').remove()
+      form.prepend(urlParams.formItems + '<input type="hidden" name="cpname" value="' + path[path.length - 2] + '">');
+      $('form.registrationForm input[name=owner_id]').remove()
+      form.prepend(urlParams.formItems + '<input type="hidden" name="owner_id" value="' + path[path.length - 3] + '">');
+      form.append(urlParams.hsServer); form.append(urlParams.currTime); form.append(urlParams.qv);
+      form.append('<input name="f_register" type="hidden" value="Register">');
+      var formAction = getFormAction('reg');
+      form.attr('action', location.origin+ '/guest/register/register_user' + location.search);
+      form.attr('method', formAction.method);
+
+      if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize()
+      }).done(function (data) {
+        form.find('.formError, .formSubmitStatus').text(data.message).show();
+        if(data.macAuthRedirect) {
+          setTimeout(function(){
+          var macAuthForm = $('<form></form>');
+            $(document.body).append(macAuthForm);
+            var clientMac = $.urlParam('clientMac').replace(/-/g, '').toLowerCase();
+            macAuthForm.append(URLSearchToFormFields())
+            macAuthForm.append('<input type="hidden" name="username" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="password" value="' + clientMac + '">')
+            macAuthForm.append('<input type="hidden" name="Submit2" value="Submit">');
+            macAuthForm.append('<input type="hidden" name="autherr" value="0">');
+            macAuthForm.append('<input type="hidden" name="url" value="https://extremenetworks.com">');
+            macAuthForm.append('<input type="hidden" name="ssid" value="' + $.urlParam('network') + '">');
+            macAuthForm.attr('action', $.urlParam('redirecturl'));
+            macAuthForm.attr('method', 'POST');
+            macAuthForm.submit();
+          }, 500);          
+        } else {
+          if(data.success) {
+            form.find('.formError, .formSubmitStatus').text(data.message || 'Successfully registered!').show();
+          } else {
+            form.find('.formError, .formSubmitStatus').text(data.message || 'Registration failed. Please contact administrator.').show();
+          }
+        }
+      }).fail(function (data) {
+        form.find('.formError, .formSubmitStatus').text('Server Error. Please try after sometime').show();
+      });
+    });
+    $('form.loginForm a.submit').on('click', function(event) {
+      event.preventDefault();
+      var form = $(this).parents('form'), formError = form.find('.formError'), urlParams = URLSearchToFormFields();
+      form.attr('action', location.origin+ '/guest/register/deviceFingerPrint' + location.search);
+      form.attr('method', 'POST');
+      if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize()
+      }).done (function (data) {
+          if(data.success) {
+            var username = $('#f_user_id').val();
+            var password = $('#f_pass_id').val();
+            var authForm = $('<form></form>');
+            $(document.body).append(authForm);
+            authForm.append(URLSearchToFormFields())
+            authForm.append('<input type="hidden" name="username" value="' + username.toLowerCase() + '">')
+            authForm.append('<input type="hidden" name="password" value="' + password + '">')
+            authForm.append('<input type="hidden" name="Submit2" value="Submit">');
+            authForm.append('<input type="hidden" name="autherr" value="0">');
+            authForm.append('<input type="hidden" name="url" value="https://extremenetworks.com">');
+            authForm.append('<input type="hidden" name="ssid" value="'+ $.urlParam('network')+'">');
+            authForm.attr('action', $.urlParam('redirecturl'));
+            authForm.attr('method', 'POST');
+            authForm.submit();
+            return false;
+          } else {
+            formError.text(data.message).show();
+          }
+        });
+    });
+    $('form.loginForm a.forgot').on('click', function(event) {
+      event.preventDefault();
+      var form = $(this).parents('form'), formError = form.find('.formError'), urlParams = URLSearchToFormFields();
+      if ($('#f_user_id').val() == "") {
+        formError.text("Please enter a valid username.").show();
+      } else {
+        $('form.registrationForm').remove()
+        var form = $('<form class="forgotPassword" method="POST"></form>'), urlParams = URLSearchToFormFields();
+        form.prepend(urlParams.formItems);
+        var username = $('#f_user_id').val();
+        form.append('<input name="username" type="hidden" value="'+ username.toLowerCase() +'">');
+        form.attr('action', location.origin+ '/guest/register/forgot' + location.search);
+        form.attr('method', 'POST');
+        if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } if (window.location.protocol === 'file:') {
+    var $err = .formError;
+    $err.parents().show();
+    $err.attr('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; color: #004289 !important; font-weight: bold; font-size: 16px; text-align: center; margin: 10px 0;');
+    $err.html('You are now connected!');
+    return; .formError.text('Connection Error: Bypassed in test mode.').show(); return; $('.formError').text('<div class='alert alert-success mt-3'><strong>Success!</strong> You are now connected.</div>').show(); return; } $.ajax({
+          type: form.attr('method'),
+          url: form.attr('action'),
+          data: form.serialize()
+        }).done(function (data) {
+          if(data.success) {
+            formError.text("Your password will be reset!" + '\n' + "Please check your email/sms for new passcode.").show();
+          } else {
+            formError.text(data.message).show();
+          }
+        });
+      }
+    });
+    $('form').on('reset', function(event) { $(this).find('.formError, .error').text('').hide(); });
+    $('.social-buttons').on('click', function(event){
+      event.preventDefault();
+      var social = $(this).data('connect');
+      social = social=='facebook_checkin' ? 'facebook&checkin' : social;
+      redirectTo(social);
+    });
+      $('form input:reset').on('click', function(event) { $('form .formError, form .error').text('').hide(); });
+    function isRegFormValid(form) {
+      var has_error = false;
+      var EMAIL_REGEXP = /[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/g;
+      form.find('.formError, .error').text('').hide();
+      form.find('.email-go').each(function(i, el){
+        var input = $(el).find('input'), error = $(el).find('.error'), value = input.val();
+	      input.val(value.toLowerCase());
+        error.hide();
+        if (value.length && !EMAIL_REGEXP.test(value)) {
+          error.text("Invalid e-mail address").show();
+          has_error = true;
+        }
+      });
+      form.find('.form-group').each(function(i, el){
+        var input = $(el).find('input'),
+          error = $(el).find('.error'),
+          value = input.val();
+
+        if ($(el).find('.redstar').text()=='') {    //sponsor validation
+          if (input.attr('type')=='sponsor_email') {
+           var SPONSOR_EMAIL_REGEX = /[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/g;
+            if (value.length && !SPONSOR_EMAIL_REGEX.test(value)) {
+                error.text("Invalid e-mail address").show();
+                has_error = true;
+            }
+          }
+        }
+
+        if ($(el).find('.redstar').text()=='*') {
+          if (input.attr('type')=='email') {
+            if (!EMAIL_REGEXP.test(value)) {
+                error.text("Invalid e-mail address").show();
+                has_error = true;
+            }
+            input.val(value.toLowerCase());
+          } else if (input.attr('type')=='sponsor_email') {
+            var SPONSOR_EMAIL_REGEX = /^[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/;
+            if (!SPONSOR_EMAIL_REGEX.test(value)) {
+                error.text("Invalid e-mail address").show();
+                has_error = true;
+            }
+            input.val(value.toLowerCase());
+          } else if (input.attr('type')=='mobile') {
+            var MOBILE_REGEXP = /^([0-9]{6,14})$/;
+            if (!MOBILE_REGEXP.test(value)) {
+                error.text("Please enter a valid Mobile Number(only numbers).").show();
+                has_error = true;
+            }
+          } else if ($(el).hasClass('birthday')) {
+            var birthday_error = false, error_message = [];
+            $(el).find('select').each(function() {
+              if (!$(this).val()) {
+                birthday_error = true;
+                error_message.push($(this).data('error-message'));
+              }
+            });
+            if (birthday_error) {
+              error.html(error_message.join('<br>')).show();
+              has_error = true;
+            }
+          } else if (value=='') {
+            error.text(input.data('error-message')).show();
+            has_error = true;
+          }
+        }
+      });
+      if (form.find('input[name=f_disclaimer]').length && !form.find('input[name=f_disclaimer]').is(':checked')) {
+        form.find('.disclaimer.error').text(form.find('input[name=f_disclaimer]').data('error-message')).show();
+        has_error = true;
+      }
+      return !has_error;
+    }
+    function isLoginFormValid(form) {
+      var error = false;
+      form.find('.formError, .error').text('').hide();
+      form.find('.form-group').each(function(i, el) {
+        if ($(el).find('input').val()=='') {
+          $(el).find('.error').text( $(el).find('input').data('error-message') ).show();
+          error = true;
+        }
+        $(el).find('input').val($(el).find('input').val().toLowerCase());
+      });
+      return !error;
+    }
+  </script>
+
+<script>
+  if ("OTPCredential" in window) {
+    window.addEventListener("DOMContentLoaded", (e) => {
+      const input = document.querySelector('input[id="f_pass_id"]');
+       if (!input) return;
+        // Set up an AbortController to use with the OTP request
+       const ac = new AbortController();
+       const form = input.closest("form");
+       const signInButton = document.querySelectorAll(".otp-sign-in");
+      if (form) {
+        // Abort the OTP request if the user attempts to submit the form manually
+        form.addEventListener("submit", (e) => {
+          ac.abort();
+        });
+      }
+      // Request the OTP via get()
+      navigator.credentials
+        .get({
+          otp: { transport: ["sms"] },
+          signal: ac.signal,
+        })
+        .then((otp) => {
+          // When the OTP is received by the app client, enter it into the form
+          // input and submit the form automatically
+          input.value = otp.code;
+          // for (let i = 0; i < signInButton.length; i++) {
+          //     signInButton[i].click();
+          // }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
+  }
+</script>
+
+<script>
+  .ready(function() {
+    .on('click', '.ancButton', function(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      #landing.hide();
+      body.html('<div style="text-align:center; padding: 100px 20px; font-family: Arial, sans-serif;"><h1 style="color: #004289; font-size: 32px;">You are now connected!</h1><p style="color: #555; font-size: 18px;">Local test mode active.</p></div>');
+      return false;
+    });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $(document).on('click', '.ancButton', function(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      $('#landing').hide();
+      $('body').html('<div style="text-align:center; padding: 100px 20px; font-family: Arial, sans-serif;"><h1 style="color: #004289; font-size: 32px;">You are now connected!</h1><p style="color: #555; font-size: 18px;">Local test mode active.</p></div>');
+      return false;
+    });
+  });
+</script>
+<script>
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.ancButton');
+    if (btn) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var brandColor = '#004289';
+      var newScreenHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connected</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .header-banner {
+      width: 100%;
+      background-color: ${brandColor};
+      padding: 10px 0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .sw_height {
+      height: 80px;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .img_ver_main {
+      vertical-align: middle;
+      display: inline-block;
+      height: 100%;
+    }
+    .img_ver_btm {
+      vertical-align: middle;
+      text-align: center;
+      height: 66px;
+      width: 300px;
+    }
+    .content-container {
+      padding: 40px 20px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .title {
+      color: ${brandColor};
+      font-size: 26px;
+      font-weight: bold;
+      margin: 0 0 20px 0;
+    }
+    .message {
+      color: #333333;
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-banner">
+    <div class="sw_height" style="height:80px;white-space: nowrap;text-align: center;">
+      <span class="img_ver_main" style="vertical-align:middle"></span>
+      <img class="img_ver_btm sw_height" src="media/white-logo.png" style="vertical-align:middle;text-align:center;height:66px;width:300px;" alt="Logo" onerror="this.onerror=null; this.outerHTML='<div style=\'color:#ffffff; font-weight:bold; font-size:20px; padding-top:25px;\'>[ Logo ]</div>';">
+    </div>
+  </div>
+  <div class="content-container">
+    <h1 class="title">You are now connected!</h1>
+    <p class="message">
+      You will be connected for 12 hours.<br>
+      After 12 hours, you will be disconnected, and will have to reconnect.
+    </p>
+  </div>
+</body>
+</html>`;
+      document.open();
+      document.write(newScreenHtml);
+      document.close();
+    }
+  }, true);
+</script>
+</body>
+</html>
+
+
+
