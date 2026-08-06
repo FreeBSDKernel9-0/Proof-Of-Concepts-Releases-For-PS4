@@ -1,0 +1,24 @@
+Google Chrome: 122.0.6261.113
+Revision: 9d4c1072da62b411b351a38b9ed6214ab236aa7b-refs/branch-heads/6261@{#1015}
+OS: Windows NT 10.0.19045
+
+Logs:
+[VERBOSE] DM token = empty
+[VERBOSE] Enrollment token =
+[VERBOSE] Client ID = 148a20c2-79e7-4d19-952b-2b0e79fe4c1b
+[VERBOSE] Unknown policy: MediaCacheSize
+[INFO] Starting CBCM Controller Initialization
+[INFO] No machine level policy manager exists.
+[VERBOSE] Unknown policy: MediaCacheSize
+[VERBOSE] PolicyService is initialized for domain: 1
+[VERBOSE] Unknown policy: MediaCacheSize
+[VERBOSE] Retrieving map of policy values
+[ERROR] MediaCacheSize has an error of type: Unknown policy.
+[VERBOSE] Client has user policies; getting precedence-related policies for Chrome
+[VERBOSE] Retrieving map of policy values
+[VERBOSE] Retrieving map of policy values
+[VERBOSE] updater status: { "domain": "EDUSHIRE.NET" }
+[VERBOSE] user status: { }
+
+Active variations:
+5e3a236d-4113a79e
