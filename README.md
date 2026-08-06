@@ -1,85 +1,80 @@
-Proof-of-concepts and releases for the PS4.
+Proof of concepts and releases for PS4.
 
-This is just a page where I release proof-of-concepts and projects for the PS4, and this page is public, so anyone can contribute.
+This is just a page where I release proof-of-concepts and projects for the PS4, and this page is public, so anyone can contribute.  
 
-Bye for now, FreeBSDKernel9-0.
+Bye for now, FreeBSDKernel9-0.  
 
-Today I finished the proof-of-concept for the JS-Strings-with-WebKit vulnerability, after staying up, 'til like, 3AM writing all the 
-source code into my notebook to be completed today.
+Today I finished the proof-of-concept for the JS-Strings-with-WebKit vulnerability, after staying up 'til, like, 3AM writing all the
+source code into my notebook to be completed today.  
 
-Hope y´all like it, FreeBSDKernel9-0.
+Hope y'all like it, FreeBSDKernel9-0.  
 
-So, update, my proof-of-concept for the JS-Strings-with-WebKit vulnerability broke, so I´m gonna start rewriting from 
-scratch. So, I guess It´s still in beta, lol. Will rewrite, then start Alpha testing, lol. If all goes to plan, release will be in 2 days, on
-10/03/2026. And I´m also gonna maybe make mods for my version of Doom, which, by the way, is called: WebKit Doom. Pretty boring name, I know.
+So, update, my proof-of-concept for the JS-Strings-with-WebKit vulnerability broke, so I'm gonna start rewriting from
+scratch. So, I guess it's still in beta, lol. Will rewrite, then start Alpha testing, lol. If all goes to plan, release will be in 2 days, on
+10/03/2026. And I'm also gonna maybe make mods for my version of Doom, which, by the way, is called: WebKit Doom. Pretty boring name, I know.  
 
-
-Bye for now, FreeBSDKernel9-0.
-
+Bye for now, FreeBSDKernel9-0.  
 
 So, update, I did a lot of bug fixing off-scene, and again, if stuff goes to plan, release will be on: 10/03/2026.
 There is still a bug where some of my code that's supposed to execute shows up as plain text (in green, for some reason.)
-But hopefully I´ll have that fixed up, and release will be on schedule, but if I do have to delay the release, I´ll let you know
-in a new post. Also, reminder, all of my stuff is open source, so if there´s stuff you want to change, go for it!
+But hopefully I'll have that fixed up, and release will be on schedule, but if I do have to delay the release, I'll let you know
+in a new post. Also, reminder, all of my stuff is open source, so if there's stuff you want to change, go for it!  
 
-Bye for now, FreeBSDKernel9-0.
+Bye for now, FreeBSDKernel9-0.  
 
-
-So, yeah, update, I fixed a bunch of new bugs off-scene, and got Doom to finally load, and run. It's pretty solid, for something 
+So, yeah, update, I fixed a bunch of new bugs off-scene, and got Doom to finally load, and run. It's pretty solid, for something
 I made myself, to say the least. Still in testing, and have to learn controls on PS4 to post here,
 but yeah, pretty solid, and I can say confidently that the release probably won't be delayed, lol.
-Not 100% confirmed yet, but yeah, that's cool. Hey, when it releases, I'll show it off to my friends next week!
+Not 100% confirmed yet, but yeah, that's cool. Hey, when it releases, I'll show it off to my friends next week!  
 
-Update you later, FreeBSDKernel9-0.
+Update you later, FreeBSDKernel9-0.  
 
+So, yeah, update, I might have to make two versions of WebKit Doom (not changing the name, though. Maybe.)
+The reason why is because I really wanna make a version for WebKit on the PS4, and my current approach (emulation, using js-dos.com) works well on Google, but it's incredibly slow on WebKit,
+it's really slow to the point where: My alerts work. The game does the intro, but doesn't boot. So you'll see two versions of WebKit Doom when it releases: WebKit Doom v2.00, for Google,
+and WebKit Doom v2.01, for... you guessed it, WebKit. I'm gonna try remaking the WebKit version from scratch, using a Doom engine.
+I'm gonna try and make it so you can have both index.html files in the same repo, and in the commit, have: WebKit Doom v2.00 - Google Version, and WebKit Doom v2.01.  
 
-So, yeah, update, I might have to make two versions of WebKit Doom (not changing the name, though. Maybe.) 
-The reason why is because I really wanna make a version for WebKit on the PS4, and my current approach (emulation, using js-dos.com), works well on Google, but it's incredibly slow on WebKit,
-it´s really slow to the point where: My alerts work. The game does the intro, but doesn't boot. So you´ll see two versions of WebKit Doom when it releases: WebKit Doom v2.00, for Google,
-and WebKit Doom v2.01, for... you guessed it, WebKit. I´m gonna try remaking the WebKit version from scratch, using a Doom engine.
-I´m gonna try and make it so you can have both index.html files in the same repo, and in the commit, have: WebKit Doom v2.00 - Google Version, and WebKit Doom v2.01.
+So yeah, you can just say the status of the WebKit version is "IN PROGRESS". But don't worry, the Google version is still releasing on: 10/03/2026.  
 
-So yeah, you can just say the status of the WebKit version is 'IN PROGRESS". But don´t worry, the Google version is still releasing on: 10/03/2026.
+Sorry for the inconvenience, FreeBSDKernel9-0.  
 
-Sorry for the inconvenience, FreeBSDKernel9-0.
-
-
-RELEASE DAY OF: WebKit Doom v2.00 - Google Version! So, yeah, kept my word, released it on the 10th. 
-But yeah, update, I'm gonna rebuild WebKit Doom v2.01 - WebKit Version from scratch, using C. 
+RELEASE DAY OF: WebKit Doom v2.00 - Google Version! So, yeah, kept my word, released it on the 10th.
+But yeah, update, I'm gonna rebuild WebKit Doom v2.01 - WebKit Version from scratch, using C.
 So yeah, that'll be delayed for a bit, as I need to find a Doom engine in C, and will have to get to grips with it.
-So, yeah, that's my update, and I'll see you later.
+So, yeah, that's my update, and I'll see you later.  
 
-Bye for now, FreeBSDKernel9-0.
+Bye for now, FreeBSDKernel9-0.  
 
-So, another update, I changed the name of WebKit Doom to WebKit Doom v2.00 - Google Version. Going to update the release to accomodate the change.
+So, another update, I changed the name of WebKit Doom to WebKit Doom v2.00 - Google Version. Going to update the release to accommodate the change.  
 
 So, a couple updates. I made a subfolder called JSOverflow, and it's basically just a bunch of stress tests for WebKit.
-I made a progress/documentation report on Reddit explaining the "safeguards" and stability of System Software 13.04, and my conclusion was basically that there is definetely better "safeguards", and the stability is better, but there is definetely some open holes and stuff to play with, that could (hopefully) aid in an exploit for 13.04, in the next couple months to a year.
+I made a progress/documentation report on Reddit explaining the "safeguards" and stability of System Software 13.04, and my conclusion was basically that there is definetely better "safeguards", and the stability is better, but there is definetely some open holes and stuff to play with, that could (hopefully) aid in an exploit for 13.04, in the next couple months to a year.  
 
-Bye for now, FreeBSDKernel9-0.
+Bye for now, FreeBSDKernel9-0.  
 
 So, yeah, my report went pretty well, and I'll see if there's new comments later.
 But as of right now, I'm working on some other stuff. I haven't had time to fix WebKit Doom, to form the v2.01 release,
-but I have a new project that's in Prototype phase or now, and it's a "Call Lua from WebKit" thing,
+but I have a new project that's in prototype phase for now, and it's a "Call Lua from WebKit" thing,
 called WebKitLua. I'll post it here in a sec, and start testing, lol.
 But don't worry, I'm on a laptop now, so fixing WebKit doom to form v2.01 will be MUCH faster,
-and I can hopefully get it out soon. No current release date confirmed yet.
+and I can hopefully get it out soon. No current release date confirmed yet.  
 
 Bye for now, FreeBSDKernel9-0.
 Short and sweet, I know,
-FreeBSDKernel9-0.
+FreeBSDKernel9-0.  
 
 So, yeah, some updates - I have 1 new project now, leak-pointer.js, which is just me trying to see if I can get WebKit to leak one of it's
-internal addresses - or pointers, using a Hunter, combined with my Memory Stress Test, that I mentioned in 
-my Reddit post.
+internal addresses - or pointers, using a Hunter, combined with my Memory Stress Test, that I mentioned in
+my Reddit post.  
 
-What's supposed to happen - if the PS4 security holds up - the browser remains responsive, and after the message, 
-the script won't move further.
+What's supposed to happen - if the PS4 security holds up - the browser remains responsive, and after the message,
+the script won't move further.  
 
-If WebKit doesn't hold up - the FOUND IT! text will appear, and you'll get a scientific notion string: 2.12e-314 or similar.
+If WebKit doesn't hold up - the FOUND IT! text will appear, and you'll get a scientific notion string: 2.12e-314 or similar.  
 
 Hope it doesn't hold up,
-FreeBSDKernel9-0.
+FreeBSDKernel9-0.  
 
 So, hey guys. Sorry I haven't updated this in ages. Here's the goss:
 
@@ -87,7 +82,7 @@ Had to scrap WebKit Doom v2.01 due to performance issues, and that wasn't even o
 
 Made some updates to old stuff, put my open source Puffy Cat fork back up (getting help with it from a mate.)
 
-My TV started acting up, so the whole 'hack a Fire Stick Lite' thingis dead in the water. But I'm gonna buy a thing that runs Linux (A RetroArch skin, 
+My TV started acting up, so the whole 'hack a Fire Stick Lite' thing is dead in the water. But I'm gonna buy a thing that runs Linux (A RetroArch skin,
 with U-Boot) and just install AOSP's MirBSD Korn Shell (MKSH) on it, because it'd be funny.
 
 Finally got my HackerOne up - so I can make reports now.
@@ -98,8 +93,8 @@ First "Aw, Snap!" crash: 4.83 GB.
 
 Second crash: 4.929 GB.
 
-Third crash: 5.50 GB
-.
+Third crash: 5.50 GB.
+
 Fourth crash: 4.600-something GB.
 
 And good news! It's up right now, completely open source, so you can try it. (Pure JS, by the way, best for injecting into tabs using DevTools.)
@@ -120,5 +115,13 @@ Red flashes at a random 3-6 second interval, with Windows XP 'scream' error audi
 
 WARNING!: THIS MIGHT MAKE YOUR BROWSER SLOW DOWN.
 
+FreeBSDKernel9-0.
 
+Sorry I haven't updated this in a while, busy.
+Some of my projects kinda flopped, but I did do a cool thing, where I dumped my school's Block Page, and Captive Web Portal, fixed their minified code
+(as most companies/corps do, they're using old platforms, and dead code configurations, as evident by the code that's up, and the Logs files I forgot to post.)
+Also, they're using a Bootstrap GitHub project (they realize anyone can grab that, right?) from 2011, by the way. Talk about Old Platform Syndrome. They went all out. Anyway, new project idea (forked from huseyinstif), to trigger CVE-2026-2441 on WebKit. I wanna see what happens, honestly. Also, I was kinda inspired by the
+WebKit "ROP to sandbox escape" bugs released recently. Oh, and also, Dr. Yenyen (@calmboy2019 - Twitter) found a workaround for CSSFontFace Exploit (the UAF in CSSFontFace, discovered by nt-fargo), so that's cool.
+
+Lemme put some shit up, rq.
 FreeBSDKernel9-0.
