@@ -1,0 +1,125 @@
+CHROME POLICIES
+
+AllowDinosaurEasterEgg
+Value: false
+Source: Platform
+Applies to: Machine
+Level: Mandatory
+Status: OK
+
+ApplicationLocaleValue
+Value: en-GB
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+DefaultPopupsSetting
+Value: 2
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+DiskCacheSize
+Value: 26214400
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+ExtensionInstallAllowlist
+Value: [
+  "feepmdlmhplaojabeoecaobfmibooaid",
+  "njnaggoebacjnbklkcccmbnpfmeagcmp",
+  "ajphlblkfpppdpkgokiejbjfohfohhmk",
+  "ohjcieidjalbkdciooknjhkfemfajpjc",
+  "ddaloccgjfibfpkalenodgehlhkgoahe",
+  "iimbdmgkimpbhimdjnmiffmeefbppijo",
+  "mmeijimgabbpbgpdklnllpncmdofkcpn",
+  "liecbddmkiiihnedobmlmillhodjkdmb",
+  "inoeonmfapjbbkmdafoankkfajkcphgd",
+  "kbfnbcaeplbcioakkpcpgfkobkghlhen"
+]
+Source: Platform
+Applies to: Machine
+Level: Mandatory
+Status: OK
+
+ExtensionInstallBlocklist
+Value: [
+  "*"
+]
+Source: Platform
+Applies to: Machine
+Level: Mandatory
+Status: OK
+
+ExtensionInstallForcelist
+Value: [
+  "ofdopmlmgifpfkijadehmhjccbefaeec;https://google.com",
+  "hdhinadidafjejdhmfkjgnolgimiaplp;https://google.com",
+  "inoeonmfapjbbkmdafoankkfajkcphgd;https://google.com"
+]
+Source: Platform
+Applies to: Machine
+Level: Mandatory
+Status: OK
+
+ForceGoogleSafeSearch
+Value: true
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+ProxyMode
+Value: system
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: Deprecated
+
+RestoreOnStartup
+Value: 4
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+RestoreOnStartupURLs
+Value: [
+  "https://rmunify.com"
+]
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+SafeBrowsingEnabled
+Value: true
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: Deprecated
+
+SpellcheckLanguage
+Value: [
+  "en-GB"
+]
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: OK
+
+MediaCacheSize
+Value: 26214400
+Source: Platform
+Applies to: Current user
+Level: Mandatory
+Status: Error (Unknown policy.)
+
+Policy Precedence
+Current precedence order: Platform machine > Cloud machine > Platform user > Cloud user
+Read&Write for Google Chrome™: No policies set
+Support for Read&Write Desktop™: No policies set
