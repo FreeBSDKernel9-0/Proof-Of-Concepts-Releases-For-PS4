@@ -125,3 +125,9 @@ WebKit "ROP to sandbox escape" bugs released recently. Oh, and also, Dr. Yenyen 
 
 Lemme put some shit up, rq.
 FreeBSDKernel9-0.
+
+'Kay, CVE-2026-2441 isn't vulnerable on WebKit, because CSS.style.set isn't set up properly, so nvm.
+Anyway, there's a ton of Safari 11/12 CVE's that grat RCE/ACE, which is cool, because they use the same WebKit engine Sony's browser (NetFrot NX) uses.
+
+Anyway, later,
+FreeBSDKernel9-0.
